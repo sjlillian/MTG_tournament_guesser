@@ -1,1 +1,6 @@
+com\sjl\mtgai\dataLayer\Tournament.class
+com\sjl\mtgai\dataLayer\Card.class
+com\sjl\mtgai\dataLayer\Deck.class
 com\sjl\mtgai\App.class
+com\sjl\mtgai\dataLayer\DataBaseConnector.class
+com\sjl\mtgai\dataLayer\TournamentEntry.class

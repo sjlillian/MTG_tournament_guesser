@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.sjl.mtgai.AppTest" time="0.059" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.sjl.mtgai.AppTest" time="0.054" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.class.path" value="C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\test-classes;C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\classes;C:\Users\xaldo\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\xaldo\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="java.class.path" value="C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\test-classes;C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\classes;C:\Users\xaldo\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\xaldo\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\xaldo\.m2\repository\org\postgresql\postgresql\42.7.5\postgresql-42.7.5.jar;C:\Users\xaldo\.m2\repository\org\checkerframework\checker-qual\3.48.3\checker-qual-3.48.3.jar;C:\Users\xaldo\.m2\repository\org\projectlombok\lombok\1.18.36\lombok-1.18.36.jar;"/>
     <property name="java.vm.vendor" value="Eclipse Adoptium"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -15,9 +15,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot\bin"/>
-    <property name="sun.java.command" value="C:\Users\xaldo\AppData\Local\Temp\surefire1563139338027693584\surefirebooter15556401317433752321.jar C:\Users\xaldo\AppData\Local\Temp\surefire1563139338027693584 2025-03-06T15-33-57_257-jvmRun1 surefire11587081125704262177tmp surefire_016077097218301615461tmp"/>
+    <property name="sun.java.command" value="C:\Users\xaldo\AppData\Local\Temp\surefire6536074889443602251\surefirebooter16156997636576149119.jar C:\Users\xaldo\AppData\Local\Temp\surefire6536074889443602251 2025-03-06T16-21-45_830-jvmRun1 surefire12411142642803911368tmp surefire_0475374621210316298tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\test-classes;C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\classes;C:\Users\xaldo\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\xaldo\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="surefire.test.class.path" value="C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\test-classes;C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\target\classes;C:\Users\xaldo\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\xaldo\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\xaldo\.m2\repository\org\postgresql\postgresql\42.7.5\postgresql-42.7.5.jar;C:\Users\xaldo\.m2\repository\org\checkerframework\checker-qual\3.48.3\checker-qual-3.48.3.jar;C:\Users\xaldo\.m2\repository\org\projectlombok\lombok\1.18.36\lombok-1.18.36.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\xaldo"/>
     <property name="user.language" value="en"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\xaldo\AppData\Local\Temp\surefire1563139338027693584\surefirebooter15556401317433752321.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\xaldo\AppData\Local\Temp\surefire6536074889443602251\surefirebooter16156997636576149119.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.6+7-LTS"/>
@@ -59,5 +59,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="com.sjl.mtgai.AppTest" time="0.004"/>
+  <testcase name="shouldAnswerWithTrue" classname="com.sjl.mtgai.AppTest" time="0"/>
 </testsuite>

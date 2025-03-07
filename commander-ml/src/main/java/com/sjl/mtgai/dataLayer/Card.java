@@ -1,9 +1,10 @@
 package com.sjl.mtgai.dataLayer;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * A class that represents a card from Magic: the Gathering. It contains information that can be found on the face of the card.
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
  * which is one "side" of the card.
  */
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,7 +28,7 @@ public class Card {
     private String power;
     private String toughness;
     private String text;
-    private Card linkedCard; // If a double card, a link to the other Card
+    private Card linkedCard = null; // If a double card, a link to the other Card
 
     public void linkCard(Card other) {
         if (linkedCard == null) { // If there is already a link, then don't replace it

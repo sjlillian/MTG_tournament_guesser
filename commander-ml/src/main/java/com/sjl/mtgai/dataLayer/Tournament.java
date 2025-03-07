@@ -11,13 +11,13 @@ import java.util.List;
 public class Tournament {
     
     private int id;
-
     private List<TournamentEntry> entries;
 
     /**
      * Constructor that creates an array list for tournament entries.
      */
-    public Tournament() {
+    public Tournament(int id) {
+        this.id = id;
         this.entries = new ArrayList<TournamentEntry>();
     }
 

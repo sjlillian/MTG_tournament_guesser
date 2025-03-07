@@ -22,10 +22,15 @@ public class DataBaseConnector {
         connection.close();
     }
 
-    public ResultSet select(String what, String where) throws SQLException {
+    public ResultSet select(String column, String table) throws SQLException {
         Statement SELECT = connection.createStatement();
-        return SELECT.executeQuery("SELECT " + what + " FROM " + where);
+        return SELECT.executeQuery("SELECT " + column + " FROM " + table);
 
+    }
+
+    public ResultSet query(String statement) throws SQLException {
+        Statement QUERY = connection.createStatement();
+        return QUERY.executeQuery(statement);
     }
 
 }

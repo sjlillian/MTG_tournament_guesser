@@ -30,13 +30,13 @@ public class App {
         }
 
         cards = getCards(connection);
-        //decks = getDecks(connection);
-        //tournaments = getTournaments(connection);
+        decks = getDecks(connection);
+        tournaments = getTournaments(connection);
 
         
-        System.out.println(cards.size());
-        //System.out.println(decks.size());
-        //System.out.println(tournaments.size());
+        System.out.println(cards.get(1));
+        System.out.println(decks.get(1));
+        System.out.println(tournaments.size());
         
 
 
@@ -50,6 +50,9 @@ public class App {
 
     }
 
+    /*
+     * Helper method to collect card data from the database.
+     */
     private static ArrayList<Card> getCards(DataBaseConnector connection) throws SQLException {
         ArrayList<Card> list = new ArrayList<Card>();
         
@@ -71,13 +74,41 @@ public class App {
         return list;
     }
 
+    /*
+     * Helper method to collect deck data from the database.
+     */
     private static ArrayList<Deck> getDecks(DataBaseConnector connection) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCards'");
+        ArrayList<Deck> list = new ArrayList<Deck>();
+
+        ResultSet set = connection.select("*", "refined_decks");
+        while (set.next()) {
+            list.add(new Deck( 
+                set.getInt("id"),
+                set.getString("commander"),
+                set.getString("partner"),
+                new ArrayList<Card>()
+            ));
+        }
+
+
+
+        return list;
     }
 
+    /*
+     * Helper method to collect tournament data from the database.
+     */
     private static ArrayList<Tournament> getTournaments(DataBaseConnector connection) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCards'");
+        ArrayList<Tournament> list = new ArrayList<Tournament>();
+
+        ResultSet set = connection.select("*", "refined_cards");
+        while (set.next()) {
+            list.add(new Tournament(
+                set.getInt("id")
+                ));
+            
+        }
+
+        return list;
     }
 }

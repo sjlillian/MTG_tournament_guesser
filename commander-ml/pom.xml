@@ -39,6 +39,24 @@
 		  <version>1.18.36</version>
 		  <scope>provided</scope>
 	  </dependency>
+    <!-- Smile core for machine learning algorithms -->
+    <dependency>
+      <groupId>com.github.haifengl</groupId>
+      <artifactId>smile-core</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    <!-- Smile data for handling datasets -->
+    <dependency>
+      <groupId>com.github.haifengl</groupId>
+      <artifactId>smile-data</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    <!-- Smile visualization for creating charts -->
+    <dependency>
+      <groupId>com.github.haifengl</groupId>
+      <artifactId>smile-plot</artifactId>
+      <version>2.6.0</version>
+    </dependency>
   </dependencies>
 
   <build>

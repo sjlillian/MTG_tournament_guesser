@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
@@ -46,7 +47,8 @@ public class DataCollector {
                 set.getString("facename"),
                 set.getString("full_type"),
                 set.getString("coloridentity"),
-                set.getString("manacost"),
+                set.getInt("manavalue"),
+                set.getString("manacost").toCharArray(),
                 set.getString("power"),
                 set.getString("toughness"),
                 set.getString("text"),
@@ -55,6 +57,8 @@ public class DataCollector {
             cards.add(newcard);
             cardIDs.put(newcard.getId(), newcard);
         };
+
+        linkCards();
     }
 
     /*
@@ -111,6 +115,19 @@ public class DataCollector {
             while (set.next()) {
                 tournament.addEntry(deckIDs.get(set.getInt("id")), set.getString("rank"));
             }
+        }
+
+    }
+
+    private void linkCards() {
+        Map<String, List<Card>> doubleCard = new HashMap<String, List<Card>>();
+        for (Card card : cards) {
+            if (card.getFacename() != null) {
+                doubleCard.computeIfAbsent(card.getName(), k -> new ArrayList<>()).add(card);
+            }
+        }
+        for (List<Card> linkedCards : doubleCard.values()) {
+            linkedCards.get(0).linkCard(linkedCards.get(1));
         }
 
     }

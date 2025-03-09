@@ -7,7 +7,9 @@ import com.sjl.mtgai.dataLayer.DataCollector;
 
 public class DataLayerController {
 
-    public static void main(String[] args) throws SQLException {
+    private static DataCollector collector;
+
+    public static void DataCollector() throws SQLException {
          DataBaseConnector connection = new DataBaseConnector();
 
         try {
@@ -18,7 +20,7 @@ public class DataLayerController {
             e.printStackTrace();
         }
 
-        DataCollector collector = new DataCollector(connection);
+        collector = new DataCollector(connection);
         collector.buildCards();
         collector.buildDecks();
         collector.buildTournaments();
@@ -38,6 +40,10 @@ public class DataLayerController {
             System.out.println("ERROR CLOSING CONNECTION!");
             e.printStackTrace();
         }
+    }
+
+    public static DataCollector getCollector() {
+        return collector;
     }
 
 }

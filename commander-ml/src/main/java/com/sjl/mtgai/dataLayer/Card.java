@@ -24,20 +24,16 @@ public class Card {
     private String facename; // If a double card, this is the name of a single part
     private String type;
     private String colors;
-    private String manacost;
+    private int manaValue;
+    private char[] manacost;
     private String power;
     private String toughness;
     private String text;
     private Card linkedCard = null; // If a double card, a link to the other Card
 
     public void linkCard(Card other) {
-        if (linkedCard == null) { // If there is already a link, then don't replace it
-            if (other != null && this.name.equals(other.name) && this != other) {
-                this.linkedCard = other;
-                other.linkedCard = this;  // Ensure bidirectional linking
-            }
-        }
-
+        this.setLinkedCard(other);
+        other.setLinkedCard(this);  // Ensure bidirectional linking
     }
 
 }

@@ -1,0 +1,367 @@
+﻿CREATE TABLE cards (
+        id SERIAL PRIMARY KEY,
+        artist TEXT,
+        artistIds TEXT,
+        asciiName TEXT,
+        attractionLights TEXT,
+        availability TEXT,
+        boosterTypes TEXT,
+        borderColor TEXT,
+        cardParts TEXT,
+        colorIdentity TEXT,
+        colorIndicator TEXT,
+        colors TEXT,
+        defense TEXT,
+        duelDeck TEXT,
+        edhrecRank INTEGER,
+        edhrecSaltiness FLOAT,
+        faceConvertedManaCost FLOAT,
+        faceFlavorName TEXT,
+        faceManaValue FLOAT,
+        faceName TEXT,
+        finishes TEXT,
+        flavorName TEXT,
+        flavorText TEXT,
+        frameEffects TEXT,
+        frameVersion TEXT,
+        hand TEXT,
+        hasAlternativeDeckLimit BOOLEAN,
+        hasContentWarning BOOLEAN,
+        hasFoil BOOLEAN,
+        hasNonFoil BOOLEAN,
+        isAlternative BOOLEAN,
+        isFullArt BOOLEAN,
+        isFunny BOOLEAN,
+        isOnlineOnly BOOLEAN,
+        isOversized BOOLEAN,
+        isPromo BOOLEAN,
+        isRebalanced BOOLEAN,
+        isReprint BOOLEAN,
+        isReserved BOOLEAN,
+        isStarter BOOLEAN,
+        isStorySpotlight BOOLEAN,
+        isTextless BOOLEAN,
+        isTimeshifted BOOLEAN,
+        keywords TEXT,
+        language TEXT,
+        layout TEXT,
+        leadershipSkills TEXT,
+        life TEXT,
+        loyalty TEXT,
+        manaCost TEXT,
+        manaValue FLOAT,
+        name TEXT,
+        number TEXT,
+        originalPrintings TEXT,
+        originalReleaseDate TEXT,
+        originalText TEXT,
+        originalType TEXT,
+        otherFaceIds TEXT,
+        power TEXT,
+        printings TEXT,
+        promoTypes TEXT,
+        rarity TEXT,
+        rebalancedPrintings TEXT,
+        relatedCards TEXT,
+        securityStamp TEXT,
+        setCode TEXT,
+        side TEXT,
+        signature TEXT,
+        sourceProducts TEXT,
+        subsets TEXT,
+        subtypes TEXT,
+        supertypes TEXT,
+        text TEXT,
+        toughness TEXT,
+        type TEXT,
+        types TEXT,
+        uuid VARCHAR(36) NOT NULL,
+        variations TEXT,
+        watermark TEXT
+);
+CREATE INDEX cards_uuid ON cards(uuid);
+
+
+CREATE TABLE cardrulings (
+        id SERIAL PRIMARY KEY,
+        date DATE,
+        text TEXT,
+        uuid VARCHAR(36) NOT NULL
+);
+CREATE INDEX cardrulings_uuid ON cardrulings(uuid);
+
+
+CREATE TABLE tournament_data (
+        rank TEXT,
+        deck_url TEXT,
+        commander TEXT,
+        partner TEXT,
+        author TEXT,
+        card TEXT,
+        tournament int
+);
+________________
+-- Creates a table from the cards dataset that contains one of each card. The SELECT statement removes all reversible cards, reducing duplicates and instances of flavored cards. 
+CREATE TABLE refined_cards (
+        id INT,
+        gamechanger BOOLEAN,
+        layout TEXT,
+        facename TEXT,
+        keywords TEXT,
+        manacost TEXT,
+        coloridentity TEXT,
+        manavalue INT,
+        name TEXT,
+        full_type TEXT,
+        power TEXT,
+        toughness TEXT,
+        text TEXT
+);
+
+
+INSERT INTO refined_cards (id, gamechanger, layout, facename, keywords, manacost, manavalue, coloridentity, name, full_type, power, toughness, text)
+        SELECT DISTINCT 
+                MIN(id), 
+                FALSE, 
+                layout, 
+                facename, 
+                keywords, 
+                manacost,
+                manavalue,
+                coloridentity,
+                CASE 
+                        WHEN asciiname IS NOT NULL THEN asciiname
+                        ELSE name 
+                END AS name,
+                CASE
+                        WHEN supertypes IS NULL AND subtypes IS NULL THEN types
+                        WHEN supertypes IS NULL AND subtypes IS NOT NULL THEN types || ' - ' || subtypes
+                        WHEN supertypes IS NOT NULL AND subtypes IS NULL THEN supertypes || ' ' || types
+                        ELSE supertypes || ' ' || types || ' - ' || subtypes
+                END AS full_type,
+                power,
+                toughness,
+                text 
+        FROM cards
+        WHERE layout NOT LIKE 'reversible_card'
+        GROUP BY name, facename, layout, keywords, manacost, manavalue, coloridentity, asciiname, supertypes, types, subtypes, power, toughness, text;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________
+
+-- Creates a table from the tournament dataset that contains the commander/partner deck for each tournament. As the tournament dataset contains all of the cards in each deck, the refined_decks is only going to contain the “title” for each deck.
+CREATE TABLE refined_decks (
+        id SERIAL PRIMARY KEY,
+        commander TEXT NOT NULL,
+        partner TEXT,
+        tournament INT,
+        author TEXT,
+        rank TEXT
+);
+
+
+INSERT INTO refined_decks (commander, partner, tournament, author, rank)
+SELECT DISTINCT commander, COALESCE(partner, 'N/A'), tournament, author, rank
+FROM tournament_data;
+
+
+
+
+
+
+________________
+
+
+-- Normalizes all cards to not have accented names and to only have the first part if split by ‘/’ or ‘//’
+CREATE EXTENSION IF NOT EXISTS unaccent;
+CREATE OR REPLACE FUNCTION normalize_card_name(search_name TEXT)
+RETURNS TEXT AS $$
+DECLARE 
+    normalized_name TEXT;
+BEGIN
+    -- Normalize accents and special characters (requires unaccent extension)
+    search_name := unaccent(search_name);
+
+
+    -- Extract the first part of a double-faced or split card
+    normalized_name := split_part(search_name, '//', 1); -- Handle "Card Name // Back Name"
+    normalized_name := split_part(normalized_name, '/', 1); -- Handle "Front / Back"
+
+
+    -- Return the cleaned name
+    RETURN normalized_name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+________________
+
+
+CREATE OR REPLACE TABLE decks_cards(
+        deck_id FOREIGN KEY;
+        card_id FOREIGN KEY;
+);
+________________
+
+
+CREATE TABLE normalized_tournament AS ( 
+        SELECT DISTINCT rank, commander, partner, normalize_card_name(card) AS normalized_card, author, tournament
+        FROM tournament_data
+);
+CREATE TABLE deck_cards AS (
+SELECT 
+    t.rank, 
+    t.commander, 
+    t.partner, 
+    normalized_card, 
+    c.name, 
+    c.id AS card_id,
+    d.id AS deck_id
+FROM normalized_tournament t
+JOIN refined_cards c
+    ON normalized_card = c.facename 
+    OR normalized_card = c.name
+JOIN refined_decks d 
+    ON t.rank = d.rank  
+    AND t.commander = d.commander
+    AND COALESCE(t.partner, 'N/A') = d.partner
+    AND t.author = d.author
+GROUP BY 
+    t.rank, 
+    t.commander, 
+    t.partner,
+        c.name,
+    t.normalized_card,
+        c.id,
+    d.id
+);
+
+
+
+
+
+
+
+
+________________
+
+
+-- Card Rulings
+CREATE TABLE card_rulings AS(
+SELECT DISTINCT 
+                MIN(c.id),
+                c.layout, 
+                c.facename, 
+                c.keywords, 
+                c.manacost, 
+                CASE 
+                        WHEN c.asciiname IS NOT NULL THEN c.asciiname ELSE c.name 
+                END AS name, 
+                c.supertypes, 
+                c.types, 
+                c.subtypes, 
+                c.text,
+                r.id AS ruling_id,
+                r.text AS ruling
+FROM cards c
+WHERE layout NOT LIKE 'reversible_card' 
+JOIN cardrulings r
+        ON c.uuid = r.uuid
+GROUP BY c.layout, 
+                c.facename, 
+                c.keywords, 
+                c.manacost,
+                c.asciiname,
+                c.name,
+                c.supertypes, 
+                c.types, 
+                c.subtypes, 
+                c.text,
+                r.id,
+                r.text
+);
+________________
+-- Testing for missing data
+SELECT * FROM tournament_data 
+WHERE rank IS NULL OR commander IS NULL OR card IS NULL;
+
+
+SELECT * FROM refined_cards 
+WHERE name IS NULL OR id IS NULL;
+
+
+SELECT * FROM refined_decks 
+WHERE commander IS NULL OR rank IS NULL;
+
+
+SELECT * FROM deck_cards 
+WHERE deck_id IS NULL OR card_id IS NULL;
+
+
+-- Testing for duplicates
+SELECT deck_id, card_id, COUNT(*)
+FROM deck_cards
+GROUP BY deck_id, card_id
+HAVING COUNT(*) > 1;
+
+
+-- Testing for orhpaned data
+SELECT dc.deck_id
+FROM deck_cards dc
+LEFT JOIN refined_decks rd ON dc.deck_id = rd.id
+WHERE rd.id IS NULL;
+
+
+SELECT dc.card_id
+FROM deck_cards dc
+LEFT JOIN refined_cards rc ON dc.card_id = rc.id
+WHERE rc.id IS NULL;
+
+
+-- Testing for all decks
+SELECT rd.id, rd.commander
+FROM refined_decks rd
+LEFT JOIN deck_cards dc ON rd.id = dc.deck_id
+WHERE dc.deck_id IS NULL;
+
+
+-- Testing for tournament completeness
+SELECT nt.rank, nt.commander, nt.partner
+FROM normalized_tournament nt
+LEFT JOIN refined_decks rd 
+    ON nt.rank = rd.rank 
+    AND nt.commander = rd.commander 
+    AND COALESCE(nt.partner, 'N/A') = COALESCE(rd.partner, 'N/A')
+WHERE rd.id IS NULL;
+
+
+
+
+CREATE VIEW card_types AS 
+SELECT id, name, supertypes, types, subtypes,
+       CASE 
+           WHEN supertypes IS NULL AND subtypes IS NULL 
+                THEN types
+           WHEN supertypes IS NULL AND subtypes IS NOT NULL 
+                THEN types || ' - ' || subtypes
+           WHEN supertypes IS NOT NULL AND subtypes IS NULL 
+                THEN supertypes || ' ' || types
+           ELSE supertypes || ' ' || types || ' - ' || subtypes
+       END AS full_type
+FROM refined_cards;

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -46,9 +48,10 @@ public class DataCollector {
                 set.getString("name"),
                 set.getString("facename"),
                 set.getString("full_type"),
+                set.getString("keywords"),
                 set.getString("coloridentity"),
                 set.getInt("manavalue"),
-                set.getString("manacost").toCharArray(),
+                convertMana(set.getString("manacost")),
                 set.getString("power"),
                 set.getString("toughness"),
                 set.getString("text"),
@@ -72,6 +75,7 @@ public class DataCollector {
                 set.getInt("id"),
                 set.getString("commander"),
                 set.getString("partner"),
+                convertRank(set.getString("rank")),
                 new ArrayList<Card>()
             );
             decks.add(newdeck);
@@ -127,8 +131,40 @@ public class DataCollector {
             }
         }
         for (List<Card> linkedCards : doubleCard.values()) {
-            linkedCards.get(0).linkCard(linkedCards.get(1));
+            if (linkedCards.size() >= 2)
+                linkedCards.get(0).linkCard(linkedCards.get(1));
         }
 
+    }
+
+    private ArrayList<Character> convertMana(String manacost) {
+        if (manacost == null) {
+            ArrayList<Character> zero = new ArrayList<Character>();
+            zero.add('-');
+            return zero;
+        } else {
+            char[] manacostArray = manacost.toCharArray();
+            ArrayList<Character> manaList = new ArrayList<Character>();
+            for (char c : manacostArray) {
+                manaList.add(c);            
+            }
+            ArrayList<Character> removeCharacters = new ArrayList<Character>();
+            removeCharacters.add(Character.valueOf('{'));
+            removeCharacters.add(Character.valueOf('}'));
+            manaList.removeAll(removeCharacters);
+            return manaList;
+        }
+    }
+
+    private double convertRank(String rank) {
+        Pattern pattern = Pattern.compile("(\\d+)%");
+        Matcher matcher = pattern.matcher(rank);
+        if (matcher.find()) {
+            String numberStr = matcher.group(1);
+            double percentage = Double.parseDouble(numberStr) / 100.0; // Converts "50" to 0.5
+            return percentage;
+        } else {
+            return -1;
+        }
     }
 }

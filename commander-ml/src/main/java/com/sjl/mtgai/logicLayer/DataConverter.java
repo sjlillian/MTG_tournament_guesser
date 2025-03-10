@@ -7,79 +7,83 @@ import com.sjl.mtgai.dataLayer.DataCollector;
 import com.sjl.mtgai.dataLayer.Deck;
 
 import smile.data.DataFrame;
-import smile.data.Dataset;
-import smile.data.vector.DoubleVector;
 
 public class DataConverter {
-
-    public DataConverter() {
-        // I need to collect data about the decks, and then build DataFrames.
-
-
-    }
+    
+    public static DataFrame deckDataFrame;
 
     public static void buildFrames(DataCollector collector) {
         ArrayList<Deck> decks = collector.getDecks();
-        ArrayList<ArrayList<Float>> deckData = new ArrayList<ArrayList<Float>>();
 
-        for (Deck deck : decks) {
-            ArrayList<Float> data = new ArrayList<Float>();
-            data.add(getManaCostAverage(deck));
-            data.add(getTypeRatio(deck, "Creature"));
-            data.add(getTypeRatio(deck, "Sorcery"));
-            data.add(getTypeRatio(deck, "Instant"));
-            data.add(getTypeRatio(deck, "Artifact"));
-            data.add(getTypeRatio(deck, "Enchantment"));
-            data.add(getTypeRatio(deck, "Land"));
-            data.add(getTypeRatio(deck, "Planeswalker"));
-            data.add(getColor(deck, "W"));
-            data.add(getColor(deck, "U"));
-            data.add(getColor(deck, "B"));
-            data.add(getColor(deck, "R"));
-            data.add(getColor(deck, "G"));
-            data.add(getColor(deck, "null"));
-            //data.add(getSynergy(deck));
-            //data.add(deck.win%);
-            deckData.add(data);
-        }
+        String[] columNames = {
+            "ManaCostAvg", "CreatureRatio", "SorceryRatio", "InstantRatio", "ArtifactRatio",
+            "EnchantmentRatio", "LandRatio", "PlaneswalkerRatio", "WhiteRatio", "BlueRatio",
+            "BlackRatio", "RedRatio", "GreenRatio", "ColorlessRatio", "WinLoss"
+        };
 
-        //DataFrame deckDataFrame = Dataset.of(deckData);
+        double[][] deckData = decks.stream()
+        .map(deck -> new double[] {
+            getManaCostAverage(deck),
+            getTypeRatio(deck, "Creature"),
+            getTypeRatio(deck, "Sorcery"),
+            getTypeRatio(deck, "Instant"),
+            getTypeRatio(deck, "Artifact"),
+            getTypeRatio(deck, "Enchantment"),
+            getTypeRatio(deck, "Land"),
+            getTypeRatio(deck, "Planeswalker"),
+            getColor(deck, 'W'),
+            getColor(deck, 'U'),
+            getColor(deck, 'B'),
+            getColor(deck, 'R'),
+            getColor(deck, 'G'),
+            getColor(deck, ' '),
+            deck.getWinLoss()
+        })
+        .toArray(double[][]::new);
+
+        deckDataFrame = DataFrame.of(deckData, columNames);
 
     }
 
-    private static float getManaCostAverage(Deck deck) {
-        float average = 0;
+    private static double getManaCostAverage(Deck deck) {
+        double average = 0;
         int nonLand = 0;
         for (Card card : deck.getDeckList()) {
-            average += card.getManaValue();
-            if (!card.getType().equals("Basic Land"))
-                nonLand ++;
+            if (card.getManacost() != null) { 
+                average += card.getManaValue();
+                if (!card.getType().contains("Basic Land"))
+                    nonLand ++;
+            }
         }
         return average / nonLand;
     }
 
-    private static float getTypeRatio(Deck deck, String type) {
-        float total = 0;
+    private static double getTypeRatio(Deck deck, String type) {
+        double total = 0;
         for (Card card : deck.getDeckList()) {
-            if (card.getType().equals(type))
+            if (card.getType().contains(type))
                 total ++;
         }
         return total / deck.getDeckList().size();
     }
 
-    private static float getColor(Deck deck, String color) {
-        float colorMana = 0;
-        float totalMana = 0;
+    private static double getColor(Deck deck, Character color) {
+        double colorMana = 0;
+        double totalMana = 0;
         for (Card card : deck.getDeckList()) {
             totalMana += card.getManaValue();
-            if (card.getManacost().equals(color));
-                //colorMana += card.getManacost();
+            for (Character manaColorChar : card.getManacost()) {
+                if (color.equals(manaColorChar))
+                    colorMana ++;
+            };
         }
         return colorMana / totalMana;
     }
+/* 
+    private static double getSynergy(Deck deck) {
+        //Too difficult for this project at the moment, will focus on it in a later iteration.
 
-    private static float getSynergy(Deck deck) {
         return 0;
-    }
+    }*/
 
 }

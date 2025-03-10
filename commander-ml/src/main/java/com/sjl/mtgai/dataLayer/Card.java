@@ -1,5 +1,7 @@
 package com.sjl.mtgai.dataLayer;
 
+import java.util.ArrayList;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +25,10 @@ public class Card {
     private String name; // Links to the name of the card
     private String facename; // If a double card, this is the name of a single part
     private String type;
+    private String keyWords;
     private String colors;
     private int manaValue;
-    private char[] manacost;
+    private ArrayList<Character> manacost;
     private String power;
     private String toughness;
     private String text;

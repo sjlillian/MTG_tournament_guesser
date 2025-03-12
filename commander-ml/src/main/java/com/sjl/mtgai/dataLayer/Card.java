@@ -25,18 +25,23 @@ public class Card {
     private String name; // Links to the name of the card
     private String facename; // If a double card, this is the name of a single part
     private String type;
-    private String keyWords;
-    private String colors;
+    private String[] keywords;
+    private char[] colors;
     private int manaValue;
     private ArrayList<Character> manacost;
     private String power;
     private String toughness;
+    private Boolean gamechanger;
     private String text;
     private Card linkedCard = null; // If a double card, a link to the other Card
 
     public void linkCard(Card other) {
         this.setLinkedCard(other);
         other.setLinkedCard(this);  // Ensure bidirectional linking
+    }
+
+    public Boolean isGamechanger() {
+        return gamechanger;
     }
 
 }

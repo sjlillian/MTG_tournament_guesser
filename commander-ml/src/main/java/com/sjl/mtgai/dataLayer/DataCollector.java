@@ -22,8 +22,6 @@ public class DataCollector {
     private Map<Integer, Card> cardIDs;
     private ArrayList<Deck> decks;
     private Map<Integer, Deck> deckIDs;
-    private ArrayList<Tournament> tournaments;
-    private Map<Integer, Tournament> tournamentIDs;
 
     public DataCollector(DataBaseConnector connection) {
         this.connection = connection;
@@ -32,8 +30,6 @@ public class DataCollector {
         this.cardIDs = new HashMap<Integer, Card>();
         this.decks = new ArrayList<Deck>();
         this.deckIDs = new HashMap<Integer, Deck>();
-        this.tournaments = new ArrayList<Tournament>();
-        this.tournamentIDs = new HashMap<Integer, Tournament>();
     }
 
     /*
@@ -48,12 +44,13 @@ public class DataCollector {
                 set.getString("name"),
                 set.getString("facename"),
                 set.getString("full_type"),
-                set.getString("keywords"),
-                set.getString("coloridentity"),
+                convertKeywords(set.getString("keywords")),
+                convertColor(set.getString("coloridentity")),
                 set.getInt("manavalue"),
                 convertMana(set.getString("manacost")),
                 set.getString("power"),
                 set.getString("toughness"),
+                set.getBoolean("gamechanger"),
                 set.getString("text"),
                 null
             );
@@ -73,8 +70,6 @@ public class DataCollector {
         while (set.next()) {
             Deck newdeck = new Deck( 
                 set.getInt("id"),
-                set.getString("commander"),
-                set.getString("partner"),
                 convertRank(set.getString("rank")),
                 new ArrayList<Card>()
             );
@@ -85,23 +80,6 @@ public class DataCollector {
         buildDeckCards();
     }
 
-    /*
-     * Helper method to collect tournament data from the database.
-     */
-    public void buildTournaments() throws SQLException {
-
-        ResultSet set = connection.select("DISTINCT tournament", "normalized_tournament");
-        while (set.next()) {
-            Tournament newTournament = new Tournament(
-                set.getInt("tournament")
-                );
-            tournaments.add(newTournament);
-            tournamentIDs.put(newTournament.getId(), newTournament);            
-        }
-
-        buildTournamentEntries();
-    }
-
     private void buildDeckCards() throws SQLException {
         
         for (Deck deck : decks) {
@@ -110,17 +88,6 @@ public class DataCollector {
                 deck.addCard(cardIDs.get(set.getInt("card_id")));
             }
         }
-    }
-
-    private void buildTournamentEntries() throws SQLException {
-
-        for (Tournament tournament : tournaments) {
-            ResultSet set = connection.query("SELECT id, rank FROM refined_decks WHERE tournament = " + tournament.getId());
-            while (set.next()) {
-                tournament.addEntry(deckIDs.get(set.getInt("id")), set.getString("rank"));
-            }
-        }
-
     }
 
     private void linkCards() {
@@ -156,6 +123,13 @@ public class DataCollector {
         }
     }
 
+    private char[] convertColor(String colorIdentity) {
+        if(colorIdentity != null)
+            return colorIdentity.replaceAll(",", " ").toCharArray();
+        else
+            return new char[0];
+    }
+
     private double convertRank(String rank) {
         Pattern pattern = Pattern.compile("(\\d+)%");
         Matcher matcher = pattern.matcher(rank);
@@ -164,7 +138,15 @@ public class DataCollector {
             double percentage = Double.parseDouble(numberStr) / 100.0; // Converts "50" to 0.5
             return percentage;
         } else {
-            return -1;
+            return Double.NaN;
+        }
+    }
+
+    private String[] convertKeywords(String keyString) {
+        if (keyString == null)
+            return new String[0];
+        else {
+            return keyString.split(",");
         }
     }
 }

@@ -21,8 +21,6 @@ import lombok.ToString;
 public class Deck {
 
     private int id;
-    private String commander;
-    private String partner; // If the commander allows a partner, NULL otherwise.
     private double winLoss;
     private List<Card> deckList;
 

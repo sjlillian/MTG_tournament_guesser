@@ -11,5 +11,6 @@ public class App {
         System.out.println("Hello World!");
         DataLayerController.DataCollector();
         LogicLayerController.logic();
+        System.out.println("All Done!");
     }
 }

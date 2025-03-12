@@ -23,14 +23,9 @@ public class DataLayerController {
         collector = new DataCollector(connection);
         collector.buildCards();
         collector.buildDecks();
-        collector.buildTournaments();
 
         System.out.println(collector.getCards().size());
         System.out.println(collector.getDecks().size());
-        System.out.println(collector.getDeckIDs().get(1).getDeckList().size());
-        System.out.println(collector.getTournaments().size());
-        System.out.println(collector.getTournamentIDs().get(1).getEntries().size());
-        
 
 
         try {

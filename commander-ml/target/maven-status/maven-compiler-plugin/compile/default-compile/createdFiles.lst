@@ -7,5 +7,4 @@ com\sjl\mtgai\LogicLayerController.class
 com\sjl\mtgai\dataLayer\DataCollector.class
 com\sjl\mtgai\DataLayerController.class
 com\sjl\mtgai\logicLayer\DataConverter.class
-com\sjl\mtgai\dataLayer\Tournament.class
-com\sjl\mtgai\dataLayer\TournamentEntry.class
+com\sjl\mtgai\logicLayer\Predictor$RandomForestTuner.class

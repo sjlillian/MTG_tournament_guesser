@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +20,8 @@ public class DataCollector {
     private Map<Integer, Card> cardIDs;
     private ArrayList<Deck> decks;
     private Map<Integer, Deck> deckIDs;
+    private ArrayList<Tournament> tournaments;
+    private Map<Integer, Tournament> tournamentIDs;
 
     public DataCollector(DataBaseConnector connection) {
         this.connection = connection;
@@ -30,7 +30,10 @@ public class DataCollector {
         this.cardIDs = new HashMap<Integer, Card>();
         this.decks = new ArrayList<Deck>();
         this.deckIDs = new HashMap<Integer, Deck>();
+        this.tournaments = new ArrayList<Tournament>();
+        this.tournamentIDs = new HashMap<Integer, Tournament>();
     }
+
 
     /*
      * Helper method to collect card data from the database and build the array list of ALL cards.
@@ -61,35 +64,6 @@ public class DataCollector {
         linkCards();
     }
 
-    /*
-     * Helper method to collect deck data from the database and build the array list of decks.
-     */
-    public void buildDecks() throws SQLException {
-
-        ResultSet set = connection.select("*", "refined_decks");
-        while (set.next()) {
-            Deck newdeck = new Deck( 
-                set.getInt("id"),
-                convertRank(set.getString("rank")),
-                new ArrayList<Card>()
-            );
-            decks.add(newdeck);
-            deckIDs.put(newdeck.getId(), newdeck);
-        }
-
-        buildDeckCards();
-    }
-
-    private void buildDeckCards() throws SQLException {
-        
-        for (Deck deck : decks) {
-            ResultSet set = connection.query("SELECT card_id FROM deck_cards WHERE deck_id = " + deck.getId());
-            while (set.next()) {
-                deck.addCard(cardIDs.get(set.getInt("card_id")));
-            }
-        }
-    }
-
     private void linkCards() {
         Map<String, List<Card>> doubleCard = new HashMap<String, List<Card>>();
         for (Card card : cards) {
@@ -102,6 +76,21 @@ public class DataCollector {
                 linkedCards.get(0).linkCard(linkedCards.get(1));
         }
 
+    }
+
+    private char[] convertColor(String colorIdentity) {
+        if(colorIdentity != null)
+            return colorIdentity.replaceAll(",", " ").toCharArray();
+        else
+            return new char[0];
+    }
+
+    private String[] convertKeywords(String keyString) {
+        if (keyString == null)
+            return new String[0];
+        else {
+            return keyString.split(",");
+        }
     }
 
     private ArrayList<Character> convertMana(String manacost) {
@@ -123,30 +112,69 @@ public class DataCollector {
         }
     }
 
-    private char[] convertColor(String colorIdentity) {
-        if(colorIdentity != null)
-            return colorIdentity.replaceAll(",", " ").toCharArray();
-        else
-            return new char[0];
+    /*
+     * Helper method to collect deck data from the database and build the array list of decks.
+     */
+    public void buildDecks() throws SQLException {
+
+        ResultSet set = connection.select("*", "refined_decks");
+        while (set.next()) {
+            Deck newdeck = new Deck( 
+                set.getInt("id"),
+                set.getInt("tournament"),
+                null,
+                new ArrayList<Card>()
+            );
+            decks.add(newdeck);
+            deckIDs.put(newdeck.getId(), newdeck);
+        }
+
+        buildDeckCards();
     }
 
-    private double convertRank(String rank) {
-        Pattern pattern = Pattern.compile("(\\d+)%");
-        Matcher matcher = pattern.matcher(rank);
-        if (matcher.find()) {
-            String numberStr = matcher.group(1);
-            double percentage = Double.parseDouble(numberStr) / 100.0; // Converts "50" to 0.5
-            return percentage;
-        } else {
-            return Double.NaN;
+    private void buildDeckCards() throws SQLException {
+        
+        for (Deck deck : decks) {
+            ResultSet set = connection.query("SELECT card_id FROM deck_cards WHERE deck_id = " + deck.getId());
+            while (set.next()) {
+                deck.addCard(cardIDs.get(set.getInt("card_id")));
+            }
         }
     }
 
-    private String[] convertKeywords(String keyString) {
-        if (keyString == null)
-            return new String[0];
-        else {
-            return keyString.split(",");
+    public void buildTournaments() throws SQLException {
+
+        ResultSet set = connection.select("DISTINCT tournament", "normalized_tournament");
+        Tournament newTournament = new Tournament();
+        while (set.next()) {
+            newTournament = new Tournament(
+                set.getInt("tournament")
+                );
+            tournaments.add(newTournament);
+            tournamentIDs.put(newTournament.getId(), newTournament);            
+        }
+
+        buildTournamentEntries();
+        for (TournamentEntry entry : newTournament.getEntries()) {
+            entry.convertRank(newTournament.getSize());
+            
         }
     }
+
+    private void buildTournamentEntries() throws SQLException {
+
+        for (Tournament tournament : tournaments) {
+            ResultSet set = connection.query("SELECT id, rank FROM refined_decks WHERE tournament = " + tournament.getId());
+            while (set.next()) {
+                Deck deck = deckIDs.get(set.getInt("id"));
+                tournament.addEntry(
+                    deck,
+                    set.getString("rank")
+                    );
+                deck.setTournament(tournament);
+            }
+        }
+
+    }
+    
 }

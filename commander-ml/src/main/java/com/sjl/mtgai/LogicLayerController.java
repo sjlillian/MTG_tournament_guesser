@@ -10,6 +10,7 @@ public class LogicLayerController {
     public static void logic() {
         DataConverter.buildFrames(DataLayerController.getCollector());
         randomForest = new Predictor(DataConverter.deckDataFrame);
+        System.out.println(DataConverter.deckDataFrame.toString());
     }
 
     public static void getPrediction() {

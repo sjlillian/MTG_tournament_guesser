@@ -23,6 +23,7 @@ public class DataLayerController {
         collector = new DataCollector(connection);
         collector.buildCards();
         collector.buildDecks();
+        collector.buildTournaments();
 
         System.out.println(collector.getCards().size());
         System.out.println(collector.getDecks().size());

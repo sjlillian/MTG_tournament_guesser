@@ -1,11 +1,9 @@
-package com.sjl.mtgai.dataLayer;
+package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -41,17 +39,32 @@ public class TournamentEntry {
         }
     }
 
-    public void convertRank(int tournamentSize) {
-        // Regular expression to match a number at the start with ordinal suffix (st, nd, rd, th)
-        Pattern pattern = Pattern.compile("^(\\d+)(?:st|nd|rd|th)");
+    public void convertRank(int actualTournamentSize) {
+        Pattern pattern = Pattern.compile("(?:Top)?(\\d+)(?:st|nd|rd|th)?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(rank.trim());
         if (matcher.find()) {
             int placement = Integer.parseInt(matcher.group(1));
-            // Compute the score using the formula: (N - r + 1) / N
-            this.rankPercentage = (tournamentSize - placement + 1) / tournamentSize;
+    
+            int normalizedSize = normalizeTournamentBracket(actualTournamentSize);
+            if (placement > normalizedSize) {
+                // Optional: clamp placement so it never exceeds normalized size
+                placement = normalizedSize;
+            }
+    
+            this.rankPercentage = 1.0 - ((double)(placement - 1) / normalizedSize);
         } else {
-            this.rankPercentage =  Double.NaN;
+            this.rankPercentage = Double.NaN;
         }
+    }
+
+    private int normalizeTournamentBracket(int actualSize) {
+        int[] brackets = {4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048};
+        for (int bracket : brackets) {
+            if (actualSize <= bracket) {
+                return bracket;
+            }
+        }
+        return actualSize; // fallback, in case of unusually large tournaments
     }
 
 }

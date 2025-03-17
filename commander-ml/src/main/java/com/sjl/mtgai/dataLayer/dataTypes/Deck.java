@@ -1,4 +1,4 @@
-package com.sjl.mtgai.dataLayer;
+package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.List;
 
@@ -22,6 +22,7 @@ public class Deck {
 
     private int id;
     private int tournamentID;
+    private List<Card> commander;
     private Tournament tournament;
     private List<Card> deckList;
 

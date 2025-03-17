@@ -11,7 +11,7 @@ public class DataBaseConnector {
     private String PDURL = "jdbc:postgresql://localhost:5432/capstone_mtgtml";
     private String username = "postgres";
     private String password = "S93nc3rL*";
-    private  Connection connection;
+    private Connection connection;
 
     public Connection getConnection() throws SQLException {
         connection = DriverManager.getConnection(PDURL, username, password);

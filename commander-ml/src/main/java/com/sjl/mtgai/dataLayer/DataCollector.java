@@ -3,9 +3,15 @@ package com.sjl.mtgai.dataLayer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sjl.mtgai.dataLayer.dataTypes.Card;
+import com.sjl.mtgai.dataLayer.dataTypes.Deck;
+import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
+import com.sjl.mtgai.dataLayer.dataTypes.TournamentEntry;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +55,7 @@ public class DataCollector {
                 set.getString("full_type"),
                 convertKeywords(set.getString("keywords")),
                 convertColor(set.getString("coloridentity")),
-                set.getInt("manavalue"),
+                set.getDouble("manavalue"),
                 convertMana(set.getString("manacost")),
                 set.getString("power"),
                 set.getString("toughness"),
@@ -85,11 +91,11 @@ public class DataCollector {
             return new char[0];
     }
 
-    private String[] convertKeywords(String keyString) {
+    private ArrayList<String> convertKeywords(String keyString) {
         if (keyString == null)
-            return new String[0];
+            return new ArrayList<String>();
         else {
-            return keyString.split(",");
+            return new ArrayList<String>(Arrays.asList(keyString.split(",")));
         }
     }
 
@@ -122,6 +128,7 @@ public class DataCollector {
             Deck newdeck = new Deck( 
                 set.getInt("id"),
                 set.getInt("tournament"),
+                convertCommander(set.getString("commander"), set.getString("partner")),
                 null,
                 new ArrayList<Card>()
             );
@@ -130,6 +137,23 @@ public class DataCollector {
         }
 
         buildDeckCards();
+    }
+
+    private List<Card> convertCommander(String commander, String partner) {
+        List<Card> commanderList = new ArrayList<Card>();
+        for (Card card : cards) {
+            if(card.getName().equals(commander)) 
+                commanderList.add(card);
+        }
+
+        if (partner != null) {
+            for (Card card : cards) {
+                if(card.getName().equals(partner)) 
+                    commanderList.add(card);
+            }
+        }
+
+        return commanderList;
     }
 
     private void buildDeckCards() throws SQLException {
@@ -155,9 +179,10 @@ public class DataCollector {
         }
 
         buildTournamentEntries();
-        for (TournamentEntry entry : newTournament.getEntries()) {
-            entry.convertRank(newTournament.getSize());
-            
+        for (Tournament tournament : tournaments) {
+            for (TournamentEntry entry : tournament.getEntries()) {
+                entry.convertRank(tournament.getEntries().size());
+            }
         }
     }
 

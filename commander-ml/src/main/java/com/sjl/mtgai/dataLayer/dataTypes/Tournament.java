@@ -1,4 +1,4 @@
-package com.sjl.mtgai.dataLayer;
+package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.ArrayList;
 import java.util.List;

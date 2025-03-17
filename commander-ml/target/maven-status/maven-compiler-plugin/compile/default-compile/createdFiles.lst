@@ -1,10 +1,14 @@
 com\sjl\mtgai\logicLayer\Predictor.class
 com\sjl\mtgai\dataLayer\Card.class
 com\sjl\mtgai\dataLayer\Deck.class
-com\sjl\mtgai\App.class
 com\sjl\mtgai\dataLayer\DataBaseConnector.class
 com\sjl\mtgai\LogicLayerController.class
 com\sjl\mtgai\dataLayer\DataCollector.class
 com\sjl\mtgai\DataLayerController.class
+com\sjl\mtgai\dataLayer\Tournament.class
+com\sjl\mtgai\UserLayerController.class
+com\sjl\mtgai\dataLayer\TournamentEntry.class
+com\sjl\mtgai\userLayer\FeatureScatterPlot.class
+com\sjl\mtgai\App.class
 com\sjl\mtgai\logicLayer\DataConverter.class
 com\sjl\mtgai\logicLayer\Predictor$RandomForestTuner.class

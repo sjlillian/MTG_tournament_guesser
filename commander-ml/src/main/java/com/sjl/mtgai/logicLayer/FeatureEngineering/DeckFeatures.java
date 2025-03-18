@@ -249,11 +249,11 @@ public class DeckFeatures {
             "Ral Zarek", "Regenerations Restored", "Rise of the Eldrazi", "Sage of Hours", "Savor the Moment", "Search the City",
             "Second Chance", "Seedtime", "Stitch in Time", "Teferi, Timebender", "Temporal Extortion", "Temporal Manipulation",
             "Temporal Mastery", "Temporal Trespass", "Time Sidewalk", "Time Sieve", "Time Vault", "Time Walk", "Timestream Navigator",
-            "Twice Upon a Time", "Ugin's Nexus", "Unlikely Meeting", "Wanderwine Prophets", "Warrior's Oath", "Wormfang Manta"
+            "Twice Upon a Time // Unlikely Meeting", "Ugin's Nexus", "Wanderwine Prophets", "Warrior's Oath", "Wormfang Manta"
         );
         int count = 0;
         for (Card card : deck.getDeckList()) {
-            if (extraTurnCards.contains(card.getFacename())) count++;
+            if (extraTurnCards.contains(card.getName())) count++;
         }
         return count;
     }
@@ -261,7 +261,7 @@ public class DeckFeatures {
     private static boolean hasMassLandDenial(Deck deck) {
         List<String> massLandDenialCards = List.of(
         "Ajani Vengeant", "Apocalypse Chime", "The Argent Etchings", "Armageddon", "Bend or Break", "Boil", "Boiling Seas",
-        "Bontu's Last Reckoning", "Boom", "Bust", "Catastrophe", "Decree of Annihilation", "Desolation Angel", "Devastation",
+        "Bontu's Last Reckoning", "Boom // Bust", "Catastrophe", "Decree of Annihilation", "Desolation Angel", "Devastation",
         "Elesh Norn", "Elspeth Tirel", "Eye of Singularity", "Fall of the Thran", "From the Ashes", "Impending Disaster",
         "Jokulhaups", "Landfill", "Lavaball Trap", "Mine Layer", "Myojin of Infinite Rage", "Obliterate", "Ravages of War",
         "Ruination", "Scourglass", "Solar Tide", "Strategy, Schmategy", "Tsunami", "Urza's Sylex", "Wake of Destruction",
@@ -269,7 +269,7 @@ public class DeckFeatures {
     );
         boolean hasMassLandDenial = false;
         for (Card card : deck.getDeckList()) {
-            if (massLandDenialCards.contains(card.getFacename())) {
+            if (massLandDenialCards.contains(card.getName())) {
                 hasMassLandDenial = true;
                 break;
             }

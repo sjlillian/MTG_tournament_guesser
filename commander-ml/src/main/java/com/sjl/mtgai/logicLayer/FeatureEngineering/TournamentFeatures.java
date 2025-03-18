@@ -1,25 +1,32 @@
 package com.sjl.mtgai.logicLayer.FeatureEngineering;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.sjl.mtgai.dataLayer.dataTypes.Card;
-import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
 import com.sjl.mtgai.dataLayer.dataTypes.TournamentEntry;
 
 public class TournamentFeatures {
 
-    public static Map<String, Double> extractFeatures(Tournament tournament) {
-        Map<String, Double> features = new HashMap<>();
+    public static List<Map<String, Double>> extractFeatures(Tournament tournament) {
+        List<Map<String, Double>> featureList = new ArrayList<>();
+
+        // Compute tournament-level features once
+        Map<String, Double> tFeatures = tournamentFeatures(tournament);
 
         for (TournamentEntry entry : tournament.getEntries()) {
-            features.putAll(DeckFeatures.extractFeatures(entry.getDeck()));
-            features.putAll(tournamentFeatures(tournament));
+            Map<String, Double> features = DeckFeatures.extractFeatures(entry.getDeck());
+
+            // Add tournament-level features to this deck's feature map
+            features.putAll(tFeatures);
+
+            featureList.add(features);
         }
 
-        return features;
+        return featureList;
     }
 
     private static Map<String, Double> tournamentFeatures(Tournament tournament) {

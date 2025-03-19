@@ -70,7 +70,7 @@ public class RandomForestOptimizer {
     }
     
     private boolean isModelAcceptable(RandomForest model) {
-        return model.metrics().r2() > 0.8 && model.metrics().rmse() < 0.25;
+        return model.metrics().r2() > 0.8 && model.metrics().rmse() > 0.75;
     }
 
     private double[] getMetrics(RandomForest model) {

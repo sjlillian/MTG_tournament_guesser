@@ -13,7 +13,7 @@ public class Predictor {
         //this.deckData = imputate(dataFrame);
         this.deckRF = RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
         if (!(deckRF.metrics().r2() > 0.8 && deckRF.metrics().rmse() < 0.25)) {
-            RandomForestOptimizer optimizer = new RandomForestOptimizer(deckRF, dataFrame, 10);
+            RandomForestOptimizer optimizer = new RandomForestOptimizer(deckRF, dataFrame, 20);
             this.deckRF = optimizer.run();
         }
         for (double importance : deckRF.importance()) {

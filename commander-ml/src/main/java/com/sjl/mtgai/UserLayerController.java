@@ -6,7 +6,7 @@ import com.sjl.mtgai.userLayer.FeatureScatterPlot;
 public class UserLayerController {
 
     public static void plotFeatures() {
-        FeatureScatterPlot.plotFeatureVsRank(DataConverter.deckDataFrame, "TCommanderDiversity");
+        FeatureScatterPlot.plotFeatureVsRank(DataConverter.deckDataFrame, "CommanderPopularity");
     }
 
 }

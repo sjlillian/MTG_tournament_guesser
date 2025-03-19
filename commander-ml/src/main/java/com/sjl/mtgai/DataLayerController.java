@@ -2,6 +2,7 @@ package com.sjl.mtgai;
 
 import java.sql.SQLException;
 
+import com.sjl.mtgai.dataLayer.CSVReader;
 import com.sjl.mtgai.dataLayer.DataBaseConnector;
 import com.sjl.mtgai.dataLayer.DataCollector;
 
@@ -10,7 +11,8 @@ public class DataLayerController {
     private static DataCollector collector;
 
     public static void DataCollector() throws SQLException {
-         DataBaseConnector connection = new DataBaseConnector();
+        CSVReader.buildComboMap();
+        DataBaseConnector connection = new DataBaseConnector();
 
         try {
             connection.getConnection();
@@ -25,12 +27,9 @@ public class DataLayerController {
         collector.buildDecks();
         collector.buildTournaments();
 
-        System.out.println(collector.getCards().size());
-        System.out.println(collector.getDecks().size());
-        System.out.println(collector.getDeckIDs().get(1).getDeckList().size());
-        System.out.println(collector.getTournaments().size());
-        System.out.println(collector.getTournamentIDs().get(1).getEntries().size());
-        
+        // System.out.println(collector.getCards().size());
+        // System.out.println(collector.getDecks().size());
+        // System.out.println(collector.getTournaments().size());
 
 
         try {

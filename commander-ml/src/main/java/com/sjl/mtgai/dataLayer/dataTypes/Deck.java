@@ -1,4 +1,4 @@
-package com.sjl.mtgai.dataLayer;
+package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.List;
 
@@ -21,13 +21,22 @@ import lombok.ToString;
 public class Deck {
 
     private int id;
-    private String commander;
-    private String partner; // If the commander allows a partner, NULL otherwise.
-    private double winLoss;
+    private int tournamentID;
+    private List<Card> commander;
+    private Tournament tournament;
     private List<Card> deckList;
 
     public void addCard(Card card) {
         deckList.add(card);
+    }
+
+    public double getRankPercentage() {
+        for (TournamentEntry entry : tournament.getEntries()) {
+            if (entry.getDeck().getId() == this.id) {
+                return entry.getRankPercentage();
+            }   
+        }
+        return Double.NaN;
     }
 
 }

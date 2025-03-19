@@ -3,11 +3,15 @@ package com.sjl.mtgai.dataLayer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.sjl.mtgai.dataLayer.dataTypes.Card;
+import com.sjl.mtgai.dataLayer.dataTypes.Deck;
+import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
+import com.sjl.mtgai.dataLayer.dataTypes.TournamentEntry;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +40,7 @@ public class DataCollector {
         this.tournamentIDs = new HashMap<Integer, Tournament>();
     }
 
+
     /*
      * Helper method to collect card data from the database and build the array list of ALL cards.
      */
@@ -48,12 +53,13 @@ public class DataCollector {
                 set.getString("name"),
                 set.getString("facename"),
                 set.getString("full_type"),
-                set.getString("keywords"),
-                set.getString("coloridentity"),
-                set.getInt("manavalue"),
+                convertKeywords(set.getString("keywords")),
+                convertColor(set.getString("coloridentity")),
+                set.getDouble("manavalue"),
                 convertMana(set.getString("manacost")),
                 set.getString("power"),
                 set.getString("toughness"),
+                set.getBoolean("gamechanger"),
                 set.getString("text"),
                 null
             );
@@ -62,65 +68,6 @@ public class DataCollector {
         };
 
         linkCards();
-    }
-
-    /*
-     * Helper method to collect deck data from the database and build the array list of decks.
-     */
-    public void buildDecks() throws SQLException {
-
-        ResultSet set = connection.select("*", "refined_decks");
-        while (set.next()) {
-            Deck newdeck = new Deck( 
-                set.getInt("id"),
-                set.getString("commander"),
-                set.getString("partner"),
-                convertRank(set.getString("rank")),
-                new ArrayList<Card>()
-            );
-            decks.add(newdeck);
-            deckIDs.put(newdeck.getId(), newdeck);
-        }
-
-        buildDeckCards();
-    }
-
-    /*
-     * Helper method to collect tournament data from the database.
-     */
-    public void buildTournaments() throws SQLException {
-
-        ResultSet set = connection.select("DISTINCT tournament", "normalized_tournament");
-        while (set.next()) {
-            Tournament newTournament = new Tournament(
-                set.getInt("tournament")
-                );
-            tournaments.add(newTournament);
-            tournamentIDs.put(newTournament.getId(), newTournament);            
-        }
-
-        buildTournamentEntries();
-    }
-
-    private void buildDeckCards() throws SQLException {
-        
-        for (Deck deck : decks) {
-            ResultSet set = connection.query("SELECT card_id FROM deck_cards WHERE deck_id = " + deck.getId());
-            while (set.next()) {
-                deck.addCard(cardIDs.get(set.getInt("card_id")));
-            }
-        }
-    }
-
-    private void buildTournamentEntries() throws SQLException {
-
-        for (Tournament tournament : tournaments) {
-            ResultSet set = connection.query("SELECT id, rank FROM refined_decks WHERE tournament = " + tournament.getId());
-            while (set.next()) {
-                tournament.addEntry(deckIDs.get(set.getInt("id")), set.getString("rank"));
-            }
-        }
-
     }
 
     private void linkCards() {
@@ -135,6 +82,21 @@ public class DataCollector {
                 linkedCards.get(0).linkCard(linkedCards.get(1));
         }
 
+    }
+
+    private char[] convertColor(String colorIdentity) {
+        if(colorIdentity != null)
+            return colorIdentity.replaceAll(",", " ").toCharArray();
+        else
+            return new char[0];
+    }
+
+    private ArrayList<String> convertKeywords(String keyString) {
+        if (keyString == null)
+            return new ArrayList<String>();
+        else {
+            return new ArrayList<String>(Arrays.asList(keyString.split(",")));
+        }
     }
 
     private ArrayList<Character> convertMana(String manacost) {
@@ -156,15 +118,88 @@ public class DataCollector {
         }
     }
 
-    private double convertRank(String rank) {
-        Pattern pattern = Pattern.compile("(\\d+)%");
-        Matcher matcher = pattern.matcher(rank);
-        if (matcher.find()) {
-            String numberStr = matcher.group(1);
-            double percentage = Double.parseDouble(numberStr) / 100.0; // Converts "50" to 0.5
-            return percentage;
-        } else {
-            return -1;
+    /*
+     * Helper method to collect deck data from the database and build the array list of decks.
+     */
+    public void buildDecks() throws SQLException {
+
+        ResultSet set = connection.select("*", "refined_decks");
+        while (set.next()) {
+            Deck newdeck = new Deck( 
+                set.getInt("id"),
+                set.getInt("tournament"),
+                convertCommander(set.getString("commander"), set.getString("partner")),
+                null,
+                new ArrayList<Card>()
+            );
+            decks.add(newdeck);
+            deckIDs.put(newdeck.getId(), newdeck);
+        }
+
+        buildDeckCards();
+    }
+
+    private List<Card> convertCommander(String commander, String partner) {
+        List<Card> commanderList = new ArrayList<Card>();
+        for (Card card : cards) {
+            if(card.getName().equals(commander)) 
+                commanderList.add(card);
+        }
+
+        if (partner != null) {
+            for (Card card : cards) {
+                if(card.getName().equals(partner)) 
+                    commanderList.add(card);
+            }
+        }
+
+        return commanderList;
+    }
+
+    private void buildDeckCards() throws SQLException {
+        
+        for (Deck deck : decks) {
+            ResultSet set = connection.query("SELECT card_id FROM deck_cards WHERE deck_id = " + deck.getId());
+            while (set.next()) {
+                deck.addCard(cardIDs.get(set.getInt("card_id")));
+            }
         }
     }
+
+    public void buildTournaments() throws SQLException {
+
+        ResultSet set = connection.select("DISTINCT tournament", "normalized_tournament");
+        Tournament newTournament = new Tournament();
+        while (set.next()) {
+            newTournament = new Tournament(
+                set.getInt("tournament")
+                );
+            tournaments.add(newTournament);
+            tournamentIDs.put(newTournament.getId(), newTournament);            
+        }
+
+        buildTournamentEntries();
+        for (Tournament tournament : tournaments) {
+            for (TournamentEntry entry : tournament.getEntries()) {
+                entry.convertRank(tournament.getEntries().size());
+            }
+        }
+    }
+
+    private void buildTournamentEntries() throws SQLException {
+
+        for (Tournament tournament : tournaments) {
+            ResultSet set = connection.query("SELECT id, rank FROM refined_decks WHERE tournament = " + tournament.getId());
+            while (set.next()) {
+                Deck deck = deckIDs.get(set.getInt("id"));
+                tournament.addEntry(
+                    deck,
+                    set.getString("rank")
+                    );
+                deck.setTournament(tournament);
+            }
+        }
+
+    }
+    
 }

@@ -1,6 +1,6 @@
 package com.sjl.mtgai.logicLayer;
 
-import smile.classification.*;
+import smile.regression.*;
 import smile.data.DataFrame;
 import smile.data.formula.Formula;
 
@@ -10,23 +10,32 @@ public class Predictor {
     private RandomForest deckRF;
     
     public Predictor(DataFrame dataFrame) {
-        this.deckData = dataFrame;
-        this.deckRF = RandomForest.fit(Formula.lhs("WinLoss"), deckData);
+        //this.deckData = imputate(dataFrame);
+        this.deckRF = RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
+        if (!(deckRF.metrics().r2() > 0.8 && deckRF.metrics().rmse() < 0.25)) {
+            RandomForestOptimizer optimizer = new RandomForestOptimizer(deckRF, dataFrame, 10);
+            this.deckRF = optimizer.run();
+        }
+        for (double importance : deckRF.importance()) {
+            System.out.println(importance);
+        }
+        System.out.println(deckRF.metrics());
     }
 
-    public int[] predict() {
+    public double[] predict() {
         return deckRF.predict(deckData);
     }
 
-    public int[][] test() {
+    public double[][] test() {
         return deckRF.test(deckData);
     }
 
-    public int[] predict(DataFrame dataFrame) {
+    public double[] predict(DataFrame dataFrame) {
         return deckRF.predict(dataFrame);
     }
 
-    public int[][] test(DataFrame dataFrame) {
+    public double[][] test(DataFrame dataFrame) {
         return deckRF.test(dataFrame);
     }
+
 }

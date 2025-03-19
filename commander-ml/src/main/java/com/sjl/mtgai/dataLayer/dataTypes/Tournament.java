@@ -1,4 +1,4 @@
-package com.sjl.mtgai.dataLayer;
+package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,11 @@ public class Tournament {
         this.entries = new ArrayList<TournamentEntry>();
     }
 
+    public Tournament() {
+        this.id = -1;
+        this.entries = new ArrayList<TournamentEntry>();
+    }
+
     public void addEntry(Deck deck, String rank) {
         entries.add(new TournamentEntry(deck, rank));
     }
@@ -31,6 +36,10 @@ public class Tournament {
 
     public int getId() {
         return id;
+    }
+
+    public int getSize() {
+        return entries.size();
     }
 
 }

@@ -11,5 +11,7 @@ public class App {
         System.out.println("Hello World!");
         DataLayerController.DataCollector();
         LogicLayerController.logic();
+        UserLayerController.plotFeatures();
+        System.out.println("All Done!");
     }
 }

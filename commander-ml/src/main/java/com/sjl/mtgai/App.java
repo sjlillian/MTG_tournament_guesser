@@ -15,7 +15,8 @@ public class App {
         DataLayerController.DataCollector();
         LogicLayerController.logic();
         UserLayerController.buildUserTournaments("docs/trial_tournament.csv");
-        HashMap<Deck, Double> deckPredictions = UserLayerController.predict(LogicLayerController.getForest());
+        //HashMap<Deck, Double> deckPredictions = UserLayerController.regPredict(LogicLayerController.getRegForest());
+        HashMap<Deck, Integer> deckPredictions = UserLayerController.classPredict(LogicLayerController.getClassForest());
 
         System.out.println("Predictions: ");
         for (Deck deck : deckPredictions.keySet()) {

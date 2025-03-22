@@ -28,8 +28,12 @@ public class userTournamentController {
         return tournaments;
     }
 
-    public static DataFrame getDataFrame() {
-        return FeatureAssembler.assembleDataFrame(tournaments);
+    public static DataFrame getRegDataFrame() {
+        return FeatureAssembler.assembleRegDataFrame(tournaments);
+    }
+
+    public static DataFrame getClassDataFrame() {
+        return FeatureAssembler.assembleClassDataFrame(tournaments);
     }
 
 }

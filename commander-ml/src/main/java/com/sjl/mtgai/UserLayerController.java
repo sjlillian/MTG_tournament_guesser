@@ -15,9 +15,9 @@ public class UserLayerController {
         userTournamentController.buildTournaments(fileLocation, DataLayerController.getCollector());
     }
 
-    public static HashMap<Deck, Double> predict(Predictor forest) {
+    public static HashMap<Deck, Double> regPredict(Predictor forest) {
         HashMap<Deck, Double> deckPredictions = new HashMap<Deck, Double>();
-        double[] predictions = forest.predict(userTournamentController.getDataFrame());
+        double[] predictions = forest.regPredict(userTournamentController.getRegDataFrame());
         for (Tournament tournament : userTournamentController.getTournaments()) {
             int i = 0;
             for (Deck deck : tournament.getDecks()) {
@@ -25,13 +25,26 @@ public class UserLayerController {
                 i++;
             }
         }
-        
+
+        return deckPredictions;
+    }
+
+    public static HashMap<Deck, Integer> classPredict(Predictor forest) {
+        HashMap<Deck, Integer> deckPredictions = new HashMap<Deck, Integer>();
+        int[] predictions = forest.classPredict(userTournamentController.getClassDataFrame());
+        for (Tournament tournament : userTournamentController.getTournaments()) {
+            int i = 0;
+            for (Deck deck : tournament.getDecks()) {
+                deckPredictions.put(deck, Integer.valueOf(predictions[i]));
+                i++;
+            }
+        }
 
         return deckPredictions;
     }
 
     public static void plotFeatures() {
-        FeatureScatterPlot.plotFeatureVsRank(DataConverter.deckDataFrame, "CommanderPopularity");
+        FeatureScatterPlot.plotFeatureVsRank(DataConverter.regDataFrame, "CommanderPopularity");
     }
 
 }

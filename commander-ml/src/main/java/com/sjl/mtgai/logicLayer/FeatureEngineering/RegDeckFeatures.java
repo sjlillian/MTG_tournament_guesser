@@ -13,7 +13,7 @@ import com.sjl.mtgai.dataLayer.dataTypes.Card;
 import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 import com.sjl.mtgai.dataLayer.dataTypes.TournamentEntry;
 
-public class DeckFeatures {
+public class RegDeckFeatures {
 
     public static Map<String, Double> extractFeatures(Deck deck) {
         Map<String, Double> features = new HashMap<>();
@@ -28,6 +28,13 @@ public class DeckFeatures {
         features.put("Tournament", (double) deck.getTournamentID());
         features.put("CommanderPopularity", getCommanderPopularity(deck));
         features.put("DeckSimilarity", getDeckSimilarity(deck));
+        features.put("RampPercentage", ArchetypeFeatureExtractor.getRampPercentage(deck));
+        features.put("ComboPercentage", ArchetypeFeatureExtractor.getComboPercentage(deck));
+        features.put("SpellslingerPercentage", ArchetypeFeatureExtractor.getSpellslingerPercentage(deck));
+        features.put("VoltronPercentage", ArchetypeFeatureExtractor.getVoltronPercentage(deck));
+        features.put("ControlPercentage", ArchetypeFeatureExtractor.getControlPercentage(deck));
+        features.put("AggroPercentage", ArchetypeFeatureExtractor.getAggroPercentage(deck));
+        features.put("StaxPercentage", ArchetypeFeatureExtractor.getStaxPercentage(deck));
         
         return features;
     }

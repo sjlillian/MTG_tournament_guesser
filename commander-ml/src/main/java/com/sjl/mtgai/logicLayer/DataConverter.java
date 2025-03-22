@@ -7,14 +7,14 @@ import smile.data.DataFrame;
 
 public class DataConverter {
     
-    public static DataFrame deckDataFrame;
-    public static DataFrame userDataFrame;
+    public static DataFrame regDataFrame;
+    public static DataFrame classDataFrame;
 
-    public static void buildFrames(DataCollector collector) {
-        deckDataFrame = FeatureAssembler.assembleDataFrame(collector.getTournaments());
+    public static void buildRegFrames(DataCollector collector) {
+        regDataFrame = FeatureAssembler.assembleRegDataFrame(collector.getTournaments());
     }
 
-    public static void buildUserFrames() {
-        //userDataFrame = FeatureAssembler.assembleUserDataFrame();
+    public static void buildClassFrames(DataCollector collector) {
+        classDataFrame = FeatureAssembler.assembleClassDataFrame(collector.getTournaments());
     }
 }

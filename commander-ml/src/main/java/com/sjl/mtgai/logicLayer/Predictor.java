@@ -27,7 +27,7 @@ public class Predictor {
         
          this.deckRRF = smile.regression.RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
          if (!(deckRRF.metrics().r2() > 0.8 && deckRRF.metrics().rmse() < 0.25)) {
-             RandomForestOptimizer optimizer = new RandomForestOptimizer(deckRRF, dataFrame, 20);
+             RegRandomForestOptimizer optimizer = new RegRandomForestOptimizer(deckRRF, dataFrame, 20);
              this.deckRRF = optimizer.run();
          }
          for (double importance : deckRRF.importance()) {
@@ -46,6 +46,10 @@ public class Predictor {
 
     private void ClassificationPredictor(DataFrame dataFrame) {
         this.deckCRF = smile.classification.RandomForest.fit(Formula.lhs("RankBracket"), dataFrame);
+        if (!(deckCRF.metrics().accuracy() > 0.8 && deckCRF.metrics().error() < 200)) {
+            ClassRandomForestOptimizer optimizer = new ClassRandomForestOptimizer(deckCRF, dataFrame, 20);
+            this.deckCRF = optimizer.run();
+        }
         for (double importance : deckCRF.importance()) {
             System.out.println(importance);
         }

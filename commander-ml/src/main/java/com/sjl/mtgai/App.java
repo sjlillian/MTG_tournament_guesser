@@ -15,12 +15,17 @@ public class App {
         DataLayerController.DataCollector();
         LogicLayerController.logic();
         UserLayerController.buildUserTournaments("docs/trial_tournament.csv");
-        //HashMap<Deck, Double> deckPredictions = UserLayerController.regPredict(LogicLayerController.getRegForest());
-        HashMap<Deck, Integer> deckPredictions = UserLayerController.classPredict(LogicLayerController.getClassForest());
+        HashMap<Deck, Double> regPredictions = UserLayerController.regPredict(LogicLayerController.getRegForest());
+        HashMap<Deck, Integer> classPredictions = UserLayerController.classPredict(LogicLayerController.getClassForest());
 
-        System.out.println("Predictions: ");
-        for (Deck deck : deckPredictions.keySet()) {
-            System.out.println(deck.toString() + "\nPrediction: " + deckPredictions.get(deck));
+        System.out.println("Classification Predictions: ");
+        for (Deck deck : classPredictions.keySet()) {
+            System.out.println(deck.toString() + "\nPrediction: " + classPredictions.get(deck));
+        }
+
+        System.out.println("Regression Predictions: ");
+        for (Deck deck : regPredictions.keySet()) {
+            System.out.println(deck.toString() + "\nPrediction: " + regPredictions.get(deck));
         }
         // UserLayerController.plotFeatures();
         System.out.println("All Done!");

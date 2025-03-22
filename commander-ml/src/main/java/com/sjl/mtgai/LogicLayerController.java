@@ -12,8 +12,8 @@ public class LogicLayerController {
         randomForest = new Predictor(DataConverter.deckDataFrame);
     }
 
-    public static void getPrediction() {
-        randomForest.predict();
+    public static Predictor getForest() {
+        return randomForest;
     }
 
 }

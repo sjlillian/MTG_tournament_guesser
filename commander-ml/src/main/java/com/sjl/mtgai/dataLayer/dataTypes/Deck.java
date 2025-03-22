@@ -1,19 +1,17 @@
 package com.sjl.mtgai.dataLayer.dataTypes;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * A class that represents a deck of cards for the commander format. In a commander deck, there is a total of 100 cards with a sideboard of
  * 15 extra cards. Of these 100 cards, one (or two) is designated the commander. There can be no duplicate cards excdept for basic lands.
  */
 
-@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,9 +20,17 @@ public class Deck {
 
     private int id;
     private int tournamentID;
-    private List<Card> commander;
+    private ArrayList<Card> commander;
     private Tournament tournament;
-    private List<Card> deckList;
+    private ArrayList<Card> deckList;
+
+    public Deck(int id, int tournamentID, ArrayList<Card> commander) {
+        this.id = id;
+        this.tournamentID = tournamentID;
+        this.tournament = new Tournament();
+        this.commander = commander;
+        this.deckList = new ArrayList<Card>();
+    }
 
     public void addCard(Card card) {
         deckList.add(card);
@@ -32,11 +38,22 @@ public class Deck {
 
     public double getRankPercentage() {
         for (TournamentEntry entry : tournament.getEntries()) {
-            if (entry.getDeck().getId() == this.id) {
+            if (entry.getDeck() == this)
                 return entry.getRankPercentage();
-            }   
         }
         return Double.NaN;
+    }
+
+    public int getRankBracket() {
+        for (TournamentEntry entry : tournament.getEntries()) {
+            if (entry.getDeck() == this) 
+                return entry.getRankBracket();
+        }
+        return 0;
+    }
+
+    public String toString() {
+        return new String("Tournamnet ID: " + this.tournamentID + "\nDeck ID: "+ this.id + "\nCommander: " + this.commander.toString());
     }
 
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * A class that represents a card from Magic: the Gathering. It contains information that can be found on the face of the card.
@@ -15,7 +14,7 @@ import lombok.ToString;
  * which is one "side" of the card.
  */
 
-@ToString
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -61,11 +60,15 @@ public class Card {
 
     public void linkCard(Card other) {
         this.setLinkedCard(other);
-        other.setLinkedCard(this);  // Ensure bidirectional linking
+        other.setLinkedCard(this);  // Ensures bidirectional linking
     }
 
     public Boolean isGamechanger() {
         return gamechanger;
+    }
+
+    public String toString() {
+        return new String(this.name);
     }
 
     private void parseType() {
@@ -88,7 +91,6 @@ public class Card {
             : new ArrayList<>();
     }
 
-    // You can define a helper:
     private boolean isSupertype(String type) {
         return List.of("Legendary", "Snow", "Basic", "World", "Ongoing").contains(type);
     }

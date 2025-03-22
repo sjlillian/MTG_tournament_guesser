@@ -1,7 +1,6 @@
 package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class the represents a tournament. It contains a list of entries (see TournamentEntry.java) and the tournament id. A tournament can
@@ -11,7 +10,7 @@ import java.util.List;
 public class Tournament {
     
     private int id;
-    private List<TournamentEntry> entries;
+    private ArrayList<TournamentEntry> entries;
 
     /**
      * Constructor that creates an array list for tournament entries.
@@ -30,7 +29,15 @@ public class Tournament {
         entries.add(new TournamentEntry(deck, rank));
     }
 
-    public List<TournamentEntry> getEntries() {
+    public ArrayList<Deck> getDecks() {
+        ArrayList<Deck> decks = new ArrayList<Deck>();
+        for (TournamentEntry entry : entries) {
+            decks.add(entry.getDeck());
+        }
+        return decks;
+    }
+
+    public ArrayList<TournamentEntry> getEntries() {
         return entries;
     }
 

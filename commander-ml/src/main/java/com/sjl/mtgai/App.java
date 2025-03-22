@@ -1,6 +1,9 @@
 package com.sjl.mtgai;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+
+import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 
 /**
  * Hello world!
@@ -11,7 +14,14 @@ public class App {
         System.out.println("Hello World!");
         DataLayerController.DataCollector();
         LogicLayerController.logic();
-        UserLayerController.plotFeatures();
+        UserLayerController.buildUserTournaments("docs/trial_tournament.csv");
+        HashMap<Deck, Double> deckPredictions = UserLayerController.predict(LogicLayerController.getForest());
+
+        System.out.println("Predictions: ");
+        for (Deck deck : deckPredictions.keySet()) {
+            System.out.println(deck.toString() + "\nPrediction: " + deckPredictions.get(deck));
+        }
+        // UserLayerController.plotFeatures();
         System.out.println("All Done!");
     }
 }

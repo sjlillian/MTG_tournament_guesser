@@ -65,6 +65,7 @@ public class DataCollector {
             );
             cards.add(newcard);
             cardIDs.put(newcard.getId(), newcard);
+            // System.out.println("Card: " + newcard.getName() + " added to the database.");
         };
 
         linkCards();
@@ -139,8 +140,8 @@ public class DataCollector {
         buildDeckCards();
     }
 
-    private List<Card> convertCommander(String commander, String partner) {
-        List<Card> commanderList = new ArrayList<Card>();
+    private ArrayList<Card> convertCommander(String commander, String partner) {
+        ArrayList<Card> commanderList = new ArrayList<Card>();
         for (Card card : cards) {
             if(card.getName().equals(commander)) 
                 commanderList.add(card);

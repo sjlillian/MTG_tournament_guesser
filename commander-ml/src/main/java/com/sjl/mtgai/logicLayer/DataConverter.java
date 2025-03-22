@@ -8,10 +8,13 @@ import smile.data.DataFrame;
 public class DataConverter {
     
     public static DataFrame deckDataFrame;
-    public static DataFrame tournamentDataFrame;
-    public static DataFrame deckTournamentDataFrame;
+    public static DataFrame userDataFrame;
 
     public static void buildFrames(DataCollector collector) {
-        deckDataFrame = FeatureAssembler.assembleDataFrame(collector.getDecks(), collector.getTournaments());
+        deckDataFrame = FeatureAssembler.assembleDataFrame(collector.getTournaments());
+    }
+
+    public static void buildUserFrames() {
+        //userDataFrame = FeatureAssembler.assembleUserDataFrame();
     }
 }

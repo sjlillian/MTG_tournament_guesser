@@ -10,10 +10,10 @@ import javax.swing.*;
 public class FeatureScatterPlot {
     public static void plotFeatureVsRank(DataFrame df, String feature) {
 
-        ScatterPlot plot = ScatterPlot.of(df, feature, "RankPercentage", '.', Color.BLUE);
-        plot.canvas().setAxisLabels(feature, "Rank Percentage");
+        ScatterPlot plot = ScatterPlot.of(df, feature, "RankBracket", '.', Color.BLUE);
+        plot.canvas().setAxisLabels(feature, "Rank Bracket");
 
-        JFrame frame = new JFrame("Feature vs RankPercentage: " + feature);
+        JFrame frame = new JFrame("Feature vs RankBracket: " + feature);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(plot.canvas().panel());
         frame.setSize(800, 600);

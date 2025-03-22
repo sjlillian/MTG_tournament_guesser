@@ -20,6 +20,7 @@ public class TournamentEntry {
     private String rank;
     private double winLoss;
     private double rankPercentage;
+    private int rankBracket;
 
     public TournamentEntry(Deck deck, String rank) {
         this.deck = deck;
@@ -28,6 +29,10 @@ public class TournamentEntry {
     }
 
     private double convertWinLoss(String rank) {
+        if (rank == null || rank.isEmpty()) {
+            return Double.NaN;
+        }
+        
         Pattern pattern = Pattern.compile("(\\d+)%");
         Matcher matcher = pattern.matcher(rank);
         if (matcher.find()) {
@@ -44,7 +49,7 @@ public class TournamentEntry {
         Matcher matcher = pattern.matcher(rank.trim());
         if (matcher.find()) {
             int placement = Integer.parseInt(matcher.group(1));
-    
+            
             int normalizedSize = normalizeTournamentBracket(actualTournamentSize);
             if (placement > normalizedSize) {
                 // Optional: clamp placement so it never exceeds normalized size
@@ -52,9 +57,12 @@ public class TournamentEntry {
             }
     
             this.rankPercentage = 1.0 - ((double)(placement - 1) / normalizedSize);
+            rankBracket(placement);
         } else {
             this.rankPercentage = Double.NaN;
+            this.rankBracket = 0;
         }
+        
     }
 
     private int normalizeTournamentBracket(int actualSize) {
@@ -65,6 +73,47 @@ public class TournamentEntry {
             }
         }
         return actualSize; // fallback, in case of unusually large tournaments
+    }
+
+    private void rankBracket(int placement) {
+        switch (placement) {
+            case 1:
+                this.rankBracket = 1;
+                break;
+            case 2:
+                this.rankBracket = 2;
+                break;
+            case 4:
+                this.rankBracket = 3;
+                break;
+            case 16:
+                this.rankBracket = 4;
+                break;
+            case 32:
+                this.rankBracket = 5;
+                break;
+            case 64:
+                this.rankBracket = 6;
+                break;
+            case 128:
+                this.rankBracket = 7;
+                break;
+            case 256:
+                this.rankBracket = 8;
+                break;
+            case 512:
+                this.rankBracket = 9;
+                break;
+            case 1024:
+                this.rankBracket = 10;
+                break;
+            case 2048:
+                this.rankBracket = 11;
+                break;
+            default:
+                this.rankBracket = 12;
+                break;
+        }
     }
 
 }

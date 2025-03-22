@@ -55,7 +55,7 @@ public class RandomForestOptimizer {
             case 1: // the second retry
                 int[] minParams = new int[]{
                     random.nextInt(100, 500), dataFrame.ncol()/4, random.nextInt(3, 5),
-                    random.nextInt(0, 5), random.nextInt(1, 2)
+                    random.nextInt(2, 5), random.nextInt(2, 5)
                 }; // Minimize forest hyperparameters
                 RandomForest.Options minOptions = new RandomForest.Options(
                     minParams[0], minParams[1], minParams[2], minParams[3], minParams[4],

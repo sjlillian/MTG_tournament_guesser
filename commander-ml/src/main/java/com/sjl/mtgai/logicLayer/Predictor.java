@@ -10,7 +10,6 @@ public class Predictor {
     private RandomForest deckRF;
     
     public Predictor(DataFrame dataFrame) {
-        //this.deckData = imputate(dataFrame);
         this.deckRF = RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
         if (!(deckRF.metrics().r2() > 0.8 && deckRF.metrics().rmse() < 0.25)) {
             RandomForestOptimizer optimizer = new RandomForestOptimizer(deckRF, dataFrame, 20);

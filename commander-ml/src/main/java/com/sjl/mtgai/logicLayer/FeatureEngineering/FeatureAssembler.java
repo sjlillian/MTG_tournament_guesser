@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
 
 import smile.data.DataFrame;
 
 public class FeatureAssembler {
 
-    public static DataFrame assembleDataFrame(ArrayList<Deck> decks, ArrayList<Tournament> tournaments) {
+    public static DataFrame assembleDataFrame(ArrayList<Tournament> tournaments) {
         List<Map<String, Double>> allFeatureMaps = tournaments.stream()
                 .flatMap(tournament -> TournamentFeatures.extractFeatures(tournament).stream())
                 .collect(Collectors.toList());

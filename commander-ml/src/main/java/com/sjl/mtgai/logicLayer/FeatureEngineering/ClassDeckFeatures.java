@@ -26,6 +26,7 @@ public class ClassDeckFeatures {
         features.put("Tournament", deck.getTournamentID());
         features.put("TypeDominance", getTypeDominance(deck));
         features.put("DeckArhcetype", getDeckArchetype(deck));
+        features.put("IsPadded", padded(deck.getIsPadded()));
         
         return features;
     }
@@ -312,6 +313,11 @@ public class ClassDeckFeatures {
 
     private static int getDeckArchetype(Deck deck) {
         return ArchetypeFeatureExtractor.getDominantArchetype(deck);
+    }
+
+    private static int padded(Boolean bool) {
+        if (bool) return 1; //the Deck has been padded
+        else return 0; //the Deck has NOT been padded
     }
 
 }

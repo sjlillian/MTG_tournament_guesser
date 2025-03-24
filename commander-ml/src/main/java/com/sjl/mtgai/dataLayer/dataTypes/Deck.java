@@ -9,7 +9,7 @@ import lombok.Setter;
 
 /**
  * A class that represents a deck of cards for the commander format. In a commander deck, there is a total of 100 cards with a sideboard of
- * 15 extra cards. Of these 100 cards, one (or two) is designated the commander. There can be no duplicate cards excdept for basic lands.
+ * 15 extra cards. Of these 100 cards, one (or two) is designated the commander. There can be no duplicate cards except for basic lands.
  */
 
 @Getter
@@ -23,6 +23,8 @@ public class Deck {
     private ArrayList<Card> commander;
     private Tournament tournament;
     private ArrayList<Card> deckList;
+    private Boolean isPadded;
+    private double paddedRatio;
 
     public Deck(int id, int tournamentID, ArrayList<Card> commander) {
         this.id = id;
@@ -30,6 +32,7 @@ public class Deck {
         this.tournament = new Tournament();
         this.commander = commander;
         this.deckList = new ArrayList<Card>();
+        this.isPadded = false;
     }
 
     public void addCard(Card card) {
@@ -54,6 +57,18 @@ public class Deck {
 
     public String toString() {
         return new String("Tournamnet ID: " + this.tournamentID + "\nDeck ID: "+ this.id + "\nCommander: " + this.commander.toString());
+    }
+
+    public void padDeck() {
+        if (this.deckList.size() <= 100){
+            this.isPadded = true;
+            int insertedCards = 100 - deckList.size();
+            this.paddedRatio = insertedCards / 100;
+            while (insertedCards > 0) {
+                this.addCard(new Card(0, "Basic Land Padder", null, "Basic Land", new ArrayList<String>(), new char[0], 0, new ArrayList<Character>(), "0", "0", false, "{T} for mana", null));
+                insertedCards--;
+            }
+        }
     }
 
 }

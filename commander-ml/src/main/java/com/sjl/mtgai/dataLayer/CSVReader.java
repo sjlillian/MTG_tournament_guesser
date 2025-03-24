@@ -81,6 +81,7 @@ public class CSVReader {
 
         for (Deck deck : tournamentDecks.values()) {
             tournaments.get(deck.getTournamentID()).addEntry(deck, null);
+            deck.padDeck();
         }
 
         return new ArrayList<>(tournaments.values().stream().toList());

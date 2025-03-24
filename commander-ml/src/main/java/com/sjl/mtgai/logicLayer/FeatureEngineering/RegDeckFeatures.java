@@ -35,6 +35,7 @@ public class RegDeckFeatures {
         features.put("ControlPercentage", ArchetypeFeatureExtractor.getControlPercentage(deck));
         features.put("AggroPercentage", ArchetypeFeatureExtractor.getAggroPercentage(deck));
         features.put("StaxPercentage", ArchetypeFeatureExtractor.getStaxPercentage(deck));
+        features.put("PaddedRatio", deck.getPaddedRatio());
         
         return features;
     }

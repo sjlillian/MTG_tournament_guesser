@@ -15,6 +15,8 @@ public class userTournamentController {
 
     private static ArrayList<Tournament> tournaments;
     private static HashMap<Tournament, ArrayList<Deck>> userDecks;
+    private static DataFrame userRegDataFrame;
+    private static DataFrame userClassDataFrame;
 
     public static void buildTournaments(String fileLocation, DataCollector collector) {
         tournaments = CSVReader.getUserTournaments(fileLocation, collector);
@@ -29,11 +31,15 @@ public class userTournamentController {
     }
 
     public static DataFrame getRegDataFrame() {
-        return FeatureAssembler.assembleRegDataFrame(tournaments);
+        if (userRegDataFrame == null)
+            userRegDataFrame = FeatureAssembler.assembleRegDataFrame(tournaments); 
+        return userRegDataFrame;
     }
 
     public static DataFrame getClassDataFrame() {
-        return FeatureAssembler.assembleClassDataFrame(tournaments);
+        if (userClassDataFrame == null)
+            userClassDataFrame = FeatureAssembler.assembleClassDataFrame(tournaments);
+        return userClassDataFrame;
     }
 
 }

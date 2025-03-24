@@ -1,12 +1,13 @@
 package com.sjl.mtgai;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
 import com.sjl.mtgai.logicLayer.DataConverter;
 import com.sjl.mtgai.logicLayer.Predictor;
-import com.sjl.mtgai.userLayer.FeatureScatterPlot;
+import com.sjl.mtgai.userLayer.Visualizer;
 import com.sjl.mtgai.userLayer.userTournamentController;
 
 public class UserLayerController {
@@ -43,8 +44,8 @@ public class UserLayerController {
         return deckPredictions;
     }
 
-    public static void plotFeatures() {
-        FeatureScatterPlot.plotFeatureVsRank(DataConverter.regDataFrame, "CommanderPopularity");
+    public static void buildVisualizer(Set<Deck> regSet, Set<Deck> classSet) {
+       Visualizer viz = new Visualizer(DataConverter.regDataFrame, DataConverter.classDataFrame, DataLayerController.getCollector(), regSet, classSet);
     }
 
 }

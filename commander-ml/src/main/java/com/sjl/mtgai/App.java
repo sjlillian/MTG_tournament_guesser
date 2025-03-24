@@ -27,7 +27,7 @@ public class App {
         for (Deck deck : regPredictions.keySet()) {
             System.out.println(deck.toString() + "\nPrediction: " + regPredictions.get(deck));
         }
-        // UserLayerController.plotFeatures();
+        UserLayerController.buildVisualizer(regPredictions.keySet(), classPredictions.keySet());
         System.out.println("All Done!");
     }
 }

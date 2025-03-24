@@ -131,13 +131,18 @@ public class DataCollector {
                 set.getInt("tournament"),
                 convertCommander(set.getString("commander"), set.getString("partner")),
                 null,
-                new ArrayList<Card>()
+                new ArrayList<Card>(),
+                false,
+                0.0
             );
             decks.add(newdeck);
             deckIDs.put(newdeck.getId(), newdeck);
         }
 
         buildDeckCards();
+        for (Deck deck : decks) {
+            deck.padDeck();
+        }
     }
 
     private ArrayList<Card> convertCommander(String commander, String partner) {

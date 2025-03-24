@@ -11,10 +11,8 @@ import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,15 +24,13 @@ public class Visualizer {
     private DataCollector collector;
     private DataFrame regDataFrame; // Regression DataFrame
     private DataFrame classDataFrame; // Classification DataFrame
-    private Set<Deck> regSet; // Regression Deck Set Order
-    private Set<Deck> classSet; // Classification Deck Set Order
+    private Set<Deck> decks;
 
-    public Visualizer(DataFrame regression, DataFrame classification, DataCollector collector, Set<Deck> regSet, Set<Deck> classSet) {
+    public Visualizer(DataFrame regression, DataFrame classification, DataCollector collector, Set<Deck> decks) {
         this.collector = collector;
         this.regDataFrame = regression;
         this.classDataFrame = classification;
-        this.regSet = regSet;
-        this.classSet = classSet;
+        this.decks = decks;
         this.frame = new JFrame("MTG Deck Analysis Visualizer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 800);
@@ -94,12 +90,7 @@ public class Visualizer {
     private Component getPairPopularity() {
         Map<String, Integer> pairPopularity = new HashMap<>();
         for (Deck deck : collector.getDecks()) {
-            List<String> names = deck.getCommander().stream()
-                         .map(Card::getName)
-                         .collect(Collectors.toList());
-            Collections.sort(names);
-            String key = String.join(" & ", names);
-            pairPopularity.put(key, pairPopularity.getOrDefault(key, 0) + 1);
+            pairPopularity.put(deck.getCommanderNames(), pairPopularity.getOrDefault(deck.getCommanderNames(), 0) + 1);
         }
 
         Map<String, Double> sortedMap = pairPopularity.entrySet()
@@ -164,8 +155,8 @@ public class Visualizer {
         DataFrame userClassDataFrame = userTournamentController.getClassDataFrame();
         DataFrame userRegDataFrame = userTournamentController.getRegDataFrame();
         JTabbedPane subTabs = new JTabbedPane();
-        subTabs.add("Regression", createDeckTabs(userRegDataFrame.drop("Tournament"), regSet));
-        subTabs.add("Classification", createDeckTabs(userClassDataFrame.drop("Tournament"), classSet));
+        subTabs.add("Regression", createDeckTabs(userRegDataFrame.drop("Tournament"), decks));
+        subTabs.add("Classification", createDeckTabs(userClassDataFrame.drop("Tournament"), decks));
         mainTabs.add("Deck Feature Breakdown", subTabs);
     }
 
@@ -191,12 +182,7 @@ public class Visualizer {
             panel.add(plot.canvas().panel(), BorderLayout.CENTER);
     
             // Add tab with a title
-            List<String> names = deck.getCommander().stream()
-                         .map(Card::getName)
-                         .collect(Collectors.toList());
-            Collections.sort(names);
-            String commander = String.join(" & ", names);
-            String tabTitle = " Deck #" + deck.getId() + " " + commander;
+            String tabTitle = " Deck #" + deck.getId() + " " + deck.getCommanderNames();
             deckTabs.addTab(tabTitle, panel);
             i++;
         }

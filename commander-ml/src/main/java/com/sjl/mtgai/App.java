@@ -1,9 +1,9 @@
 package com.sjl.mtgai;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.List;
 
-import com.sjl.mtgai.dataLayer.dataTypes.Deck;
+import com.sjl.mtgai.userLayer.DeckPredictionAggregate;
 
 /**
  * Hello world!
@@ -15,19 +15,9 @@ public class App {
         DataLayerController.DataCollector();
         LogicLayerController.logic();
         UserLayerController.buildUserTournaments("docs/trial_tournament.csv");
-        HashMap<Deck, Double> regPredictions = UserLayerController.regPredict(LogicLayerController.getRegForest());
-        HashMap<Deck, Integer> classPredictions = UserLayerController.classPredict(LogicLayerController.getClassForest());
-
-        System.out.println("Classification Predictions: ");
-        for (Deck deck : classPredictions.keySet()) {
-            System.out.println(deck.toString() + "\nPrediction: " + classPredictions.get(deck));
-        }
-
-        System.out.println("Regression Predictions: ");
-        for (Deck deck : regPredictions.keySet()) {
-            System.out.println(deck.toString() + "\nPrediction: " + regPredictions.get(deck));
-        }
-        UserLayerController.buildVisualizer(regPredictions.keySet(), classPredictions.keySet());
+        List<DeckPredictionAggregate> predictions = UserLayerController.runPredictions(100);
+        UserLayerController.printUserPredictions(predictions, 0);
+        UserLayerController.buildVisualizer(predictions);
         System.out.println("All Done!");
     }
 }

@@ -5,8 +5,8 @@ import smile.data.formula.Formula;
 
 public class Predictor {
 
-    private smile.regression.RandomForest deckRRF;
-    private smile.classification.RandomForest deckCRF;
+    private smile.regression.RandomForest regRF;
+    private smile.classification.RandomForest classRF;
     
     public Predictor(DataFrame dataFrame) {
         if (isReggression(dataFrame))
@@ -25,43 +25,43 @@ public class Predictor {
 
     private void RegressionPredictor(DataFrame dataFrame) {
         
-         this.deckRRF = smile.regression.RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
-         if (!(deckRRF.metrics().r2() > 0.8 && deckRRF.metrics().rmse() < 0.25)) {
-             RegRandomForestOptimizer optimizer = new RegRandomForestOptimizer(deckRRF, dataFrame, 20);
-             this.deckRRF = optimizer.run();
+         this.regRF = smile.regression.RandomForest.fit(Formula.lhs("RankPercentage"), dataFrame);
+         if (!(regRF.metrics().r2() > 0.8 && regRF.metrics().rmse() < 0.25)) {
+             RegRandomForestOptimizer optimizer = new RegRandomForestOptimizer(regRF, dataFrame, 20);
+             this.regRF = optimizer.run();
          }
-         for (double importance : deckRRF.importance()) {
+         for (double importance : regRF.importance()) {
              System.out.println(importance);
          }
-         System.out.println(deckRRF.metrics());
+         System.out.println(regRF.metrics());
     }
 
     public double[] regPredict(DataFrame dataFrame) {
-        return deckRRF.predict(dataFrame);
+        return regRF.predict(dataFrame);
     }
 
     public double[][] regTest(DataFrame dataFrame) {
-        return deckRRF.test(dataFrame);
+        return regRF.test(dataFrame);
     }
 
     private void ClassificationPredictor(DataFrame dataFrame) {
-        this.deckCRF = smile.classification.RandomForest.fit(Formula.lhs("RankBracket"), dataFrame);
-        if (!(deckCRF.metrics().accuracy() > 0.8 && deckCRF.metrics().error() < 200)) {
-            ClassRandomForestOptimizer optimizer = new ClassRandomForestOptimizer(deckCRF, dataFrame, 20);
-            this.deckCRF = optimizer.run();
+        this.classRF = smile.classification.RandomForest.fit(Formula.lhs("RankBracket"), dataFrame);
+        if (!(classRF.metrics().accuracy() > 0.8 && classRF.metrics().error() < 200)) {
+            ClassRandomForestOptimizer optimizer = new ClassRandomForestOptimizer(classRF, dataFrame, 20);
+            this.classRF = optimizer.run();
         }
-        for (double importance : deckCRF.importance()) {
+        for (double importance : classRF.importance()) {
             System.out.println(importance);
         }
-        System.out.println(deckCRF.metrics());
+        System.out.println(classRF.metrics());
     }
 
     public int[] classPredict(DataFrame dataFrame) {
-        return deckCRF.predict(dataFrame);
+        return classRF.predict(dataFrame);
     }
 
     public int[][] classTest(DataFrame dataFrame) {
-        return deckCRF.test(dataFrame);
+        return classRF.test(dataFrame);
     }
 
 }

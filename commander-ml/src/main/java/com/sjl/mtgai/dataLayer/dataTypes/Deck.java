@@ -1,6 +1,9 @@
 package com.sjl.mtgai.dataLayer.dataTypes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,7 +59,7 @@ public class Deck {
     }
 
     public String toString() {
-        return new String("Tournamnet ID: " + this.tournamentID + "\nDeck ID: "+ this.id + "\nCommander: " + this.commander.toString());
+        return new String("Tournamnet ID: " + this.tournamentID + "\nDeck ID: "+ this.id + "\nCommander: " + this.getCommanderNames());
     }
 
     public void padDeck() {
@@ -69,6 +72,14 @@ public class Deck {
                 insertedCards--;
             }
         }
+    }
+
+    public String getCommanderNames() {
+        List<String> names = this.getCommander().stream()
+                         .map(Card::getName)
+                         .collect(Collectors.toList());
+        Collections.sort(names);
+        return String.join(" & ", names);
     }
 
 }

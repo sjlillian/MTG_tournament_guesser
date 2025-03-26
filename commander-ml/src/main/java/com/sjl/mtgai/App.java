@@ -12,13 +12,13 @@ import com.sjl.mtgai.userLayer.DeckPredictionAggregate;
 public class App {
     public static void main( String[] args ) throws SQLException {
         System.out.println("Hello World!");
-        //DataLayerController.DBCollector();
+        // DataLayerController.DBCollector(URL, USERNAME, PASSWORD);
         DataLayerController.CSVCollector();
         LogicLayerController.logic();
-        UserLayerController.buildUserTournaments("docs/trial_tournament.csv");
-        List<DeckPredictionAggregate> predictions = UserLayerController.runPredictions(100);
+        UserLayerController.buildUserTournaments("data/tournament_data - trialcsv_10.csv");
+        List<DeckPredictionAggregate> predictions = UserLayerController.runPredictions(1);
         UserLayerController.printUserPredictions(predictions, 0);
-        UserLayerController.buildVisualizer(predictions);
+        // UserLayerController.buildVisualizer(predictions);
         System.out.println("All Done!");
     }
 }

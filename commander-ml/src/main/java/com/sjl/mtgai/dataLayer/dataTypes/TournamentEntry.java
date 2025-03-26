@@ -1,5 +1,6 @@
 package com.sjl.mtgai.dataLayer.dataTypes;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,13 +57,13 @@ public class TournamentEntry {
                 placement = normalizedSize;
             }
     
-            this.rankPercentage = 1.0 - ((double)(placement - 1) / normalizedSize);
+            // this.rankPercentage = logScaleRank(placement, actualTournamentSize);
+            this.rankPercentage = rankNoise(placement, normalizedSize);
             rankBracket(placement);
         } else {
             this.rankPercentage = Double.NaN;
             this.rankBracket = 0;
         }
-        
     }
 
     private int normalizeTournamentBracket(int actualSize) {
@@ -73,6 +74,16 @@ public class TournamentEntry {
             }
         }
         return actualSize; // fallback, in case of unusually large tournaments
+    }
+
+    // private double logScaleRank(int placement, int totalPlayers) {
+    //     return 1.0 - (Math.log(placement) / Math.log(totalPlayers));
+    // }
+
+    private double rankNoise(int placement, int actualTournamentSize) {
+        Random random = new Random();
+        double randomPlacement = random.nextDouble((placement / 2) + 1, placement + 1);
+        return 1.0 - (randomPlacement) / actualTournamentSize;
     }
 
     private void rankBracket(int placement) {

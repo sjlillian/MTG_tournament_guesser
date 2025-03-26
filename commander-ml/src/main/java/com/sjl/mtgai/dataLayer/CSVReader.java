@@ -3,6 +3,7 @@ package com.sjl.mtgai.dataLayer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -100,13 +101,19 @@ public class CSVReader {
         for (Card card : collector.getCards()) {
             String name = card.getName();
             String faceName = card.getFacename();
-            if (faceName != null && faceName.equals(cardName)) {
+            if (faceName != null && faceName.equals(normalizeString(cardName))) {
                 return card;
             }
-            if(faceName == null && name.equals(cardName))
+            if(faceName == null && name.equals(normalizeString(cardName)))
                 return card;
         }
         System.out.println("Card not found: " + cardName);
         return null;
+    }
+
+    // Normalize string by removing accents and decomposing special characters
+    private static String normalizeString(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFKD)
+                        .replaceAll("\\p{M}", "");
     }
 }

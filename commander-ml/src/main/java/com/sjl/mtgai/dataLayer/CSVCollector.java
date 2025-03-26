@@ -2,15 +2,14 @@ package com.sjl.mtgai.dataLayer;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvValidationException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
 import com.sjl.mtgai.dataLayer.dataTypes.Card;
 import com.sjl.mtgai.dataLayer.dataTypes.Deck;
 import com.sjl.mtgai.dataLayer.dataTypes.Tournament;
@@ -35,7 +34,7 @@ public class CSVCollector extends DataCollector{
     public void buildCards() {
         try {
             buildCSVCards();
-        } catch (IOException | CsvValidationException e) {
+        } catch (IOException e) {
             System.out.println("File " + CSVFolder + "/refined_cards.csv not found!");
             e.printStackTrace();
         }
@@ -45,7 +44,7 @@ public class CSVCollector extends DataCollector{
     public void buildDecks() {
         try {
             buildCSVDecks();
-        } catch (IOException | CsvValidationException e) {
+        } catch (IOException   e) {
             System.out.println("File " + CSVFolder + "/refined_decks.csv not found!");
             e.printStackTrace();
         }
@@ -55,143 +54,168 @@ public class CSVCollector extends DataCollector{
     public void buildTournaments() {
         try {
             buildCSVTournaments();
-        } catch (IOException | CsvValidationException e) {
+        } catch (IOException  e) {
             System.out.println("File " + CSVFolder + "/normalized_tournament.csv not found!");
             e.printStackTrace();
         }
     }
 
-    private void buildCSVCards() throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReaderBuilder(new FileReader(CSVFolder + "/refined_cards.csv"))
-            .withCSVParser(new CSVParserBuilder()
-                .withSeparator(',')  // Ensure it still uses commas
-                .withQuoteChar('"')  // Ensure quotes are handled
-                .withEscapeChar('\\') // Escape quotes properly
-                .build())
-            .build();
-        String[] tokens; // id, gamechanger, layout, facename, keywords, manacost, coloridentity, manavalue, name, full_type, power, toughness, text
-    
-        while ((tokens = reader.readNext()) != null) {
-            if (tokens.length != 13) {  
-                System.err.println("Malformed row detected: " + Arrays.toString(tokens) + "\n");
-                tokens = fixMalformedRow(tokens); // Auto-fix function
-            }
-            if (tokens[0].equals("id")) {
-                continue; // Skip the header line
+    private void buildCSVCards() throws IOException {
+        Reader reader = new FileReader(CSVFolder + "/refined_cards.csv");
+        CSVParser parser = CSVFormat.DEFAULT
+            .builder()
+            .setHeader()
+            .setSkipHeaderRecord(true) // Skips the first row
+            .setIgnoreSurroundingSpaces(true) // Removes extra spaces
+            .setIgnoreEmptyLines(true) // Ignores blank lines
+            .setQuote('"') // Ensures quoted values work properly
+            .get()
+            .parse(reader); 
+
+        for (CSVRecord record : parser) {
+            if (record.size() != 13) {  
+                System.err.println("Malformed row detected: " + record);
+                continue;  // Skip malformed rows
             }
 
-            Card newcard = new Card(
-                Integer.parseInt(tokens[0]), //not null
-                tokens[8], //not null
-                ((!tokens[3].equals("")) ? tokens[3] : null), //nullable
-                tokens[9], //not null
-                convertKeywords(tokens[4]),
-                convertColor(tokens[6]),
-                ((!tokens[7].equals("")) ? Double.parseDouble(tokens[7]) : Double.NaN),
-                convertMana(tokens[5]),
-                ((!tokens[10].equals("")) ? tokens[10] : null), //nullable
-                ((!tokens[11].equals("")) ? tokens[11] : null), //nullable
-                Boolean.parseBoolean(tokens[1]), //not null
-                ((!tokens[12].equals("")) ? tokens[12] : null),
-                null
+            Card newCard = new Card(
+                Integer.parseInt(record.get("id")),  // ID (not null)
+                record.get("name"),  // Name (not null)
+                record.get("facename").isEmpty() ? null : record.get(3),  // Face name (nullable)
+                record.get("full_type"),  // Full type (not null)
+                convertKeywords(record.get("keywords")),  // Keywords
+                convertColor(record.get("coloridentity")),  // Color identity
+                record.get("manavalue").isEmpty() ? Double.NaN : Double.parseDouble(record.get("manavalue")), // Mana value
+                convertMana(record.get("manacost")),  // Mana cost
+                record.get("power").isEmpty() ? null : record.get("power"), // Power (nullable)
+                record.get("toughness").isEmpty() ? null : record.get("toughness"), // Toughness (nullable)
+                Boolean.parseBoolean(record.get("gamechanger")),  // Game changer (not null)
+                record.get("text").isEmpty() ? null : record.get("text"), // Card text
+                null  // Linked card (optional, processed later)
             );
-            cards.add(newcard);
-            cardIDs.put(newcard.getId(), newcard);
+
+            cards.add(newCard);
+            cardIDs.put(newCard.getId(), newCard);
         }
         reader.close();
+        parser.close();
         linkCards();
     }
 
-    private static String[] fixMalformedRow(String[] tokens) {
-        List<String> fixedTokens = new ArrayList<>();
-        StringBuilder mergedField = new StringBuilder();
+    // private static String[] fixMalformedRow(String[] tokens) {
+    //     List<String> fixedTokens = new ArrayList<>();
+    //     StringBuilder mergedField = new StringBuilder();
 
-        boolean insideQuotes = false;
-        for (String token : tokens) {
-            if (token.startsWith("\"") && !insideQuotes) {
-                insideQuotes = true;
-                mergedField = new StringBuilder(token);
-            } else if (token.endsWith("\"") && insideQuotes) {
-                insideQuotes = false;
-                mergedField.append(",").append(token);
-                fixedTokens.add(mergedField.toString());
-            } else if (insideQuotes) {
-                mergedField.append(",").append(token);
-            } else {
-                fixedTokens.add(token);
+    //     boolean insideQuotes = false;
+    //     for (String token : tokens) {
+    //         if (token.startsWith("\"") && !insideQuotes) {
+    //             insideQuotes = true;
+    //             mergedField = new StringBuilder(token);
+    //         } else if (token.endsWith("\"") && insideQuotes) {
+    //             insideQuotes = false;
+    //             mergedField.append(",").append(token);
+    //             fixedTokens.add(mergedField.toString());
+    //         } else if (insideQuotes) {
+    //             mergedField.append(",").append(token);
+    //         } else {
+    //             fixedTokens.add(token);
+    //         }
+    //     }
+
+    //     return fixedTokens.toArray(new String[0]);
+    // }
+
+    private void buildCSVDecks() throws IOException {
+        Reader reader = new FileReader(CSVFolder + "/refined_decks.csv");
+        CSVParser csvParser = CSVFormat.DEFAULT
+            .builder()
+            .setHeader()
+            .setSkipHeaderRecord(true) // Skips the first row
+            .setIgnoreSurroundingSpaces(true) // Removes extra spaces
+            .setIgnoreEmptyLines(true) // Ignores blank lines
+            .setQuote('"') // Ensures quoted values work properly
+            .get()
+            .parse(reader); 
+
+        for (CSVRecord record : csvParser) {
+            // Ensure we don't process an incomplete row
+            if (record.size() < 6) { 
+                System.err.println("Skipping malformed row: " + record);
+                continue;
             }
-        }
 
-        return fixedTokens.toArray(new String[0]);
-    }
-
-    private void buildCSVDecks() throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReader(new FileReader(CSVFolder + "/refined_decks.csv"));
-        String[] tokens; //id, commander, partner, tournament, author, rank
-    
-        while ((tokens = reader.readNext()) != null) {
-            if (tokens[0].equals("id")) {
-                continue; // Skip the header line
-            }
-
-            Deck newdeck = new Deck( 
-                Integer.parseInt(tokens[0]),
-                Integer.parseInt(tokens[3]),
-                convertCommander(tokens[1], tokens[2]),
-                null,
-                new ArrayList<Card>(),
-                false,
-                0.0
+            Deck newDeck = new Deck(
+                Integer.parseInt(record.get("id")),  // ID
+                Integer.parseInt(record.get("tournament")),  // Tournament ID
+                convertCommander(record.get("commander"), record.get("partner")),  // Commander & Partner
+                null,  // Placeholder for tournament reference
+                new ArrayList<>(),  // Empty decklist (filled later)
+                false,  // Default is not padded
+                0.0  // Default rank percentage
             );
-            decks.add(newdeck);
-            deckIDs.put(newdeck.getId(), newdeck);
+
+            decks.add(newDeck);
+            deckIDs.put(newDeck.getId(), newDeck);
         }
-        reader.close();
-        buildDeckCards();
+        buildDeckCards(); // Calls next step
     }
 
     @Override
     protected void buildDeckCards() {
         try {
             buildCSVDeckCards();
-        } catch (IOException | CsvValidationException e) {
+        } catch (IOException  e) {
             System.out.println("File " + CSVFolder + "/deck_cards.csv not found!");
             e.printStackTrace();
         }
     }
 
-    private void buildCSVDeckCards() throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReader(new FileReader(CSVFolder + "/deck_cards.csv"));
-        String[] tokens; //rank, commander, partner, normalized_card, name, card_id, deck_id
+    private void buildCSVDeckCards() throws IOException {
+        Reader reader = new FileReader(CSVFolder + "/deck_cards.csv");
+        CSVParser parser = CSVFormat.DEFAULT
+            .builder()
+            .setHeader()
+            .setSkipHeaderRecord(true) // Skips the first row
+            .setIgnoreSurroundingSpaces(true) // Removes extra spaces
+            .setIgnoreEmptyLines(true) // Ignores blank lines
+            .setQuote('"') // Ensures quoted values work properly
+            .get()
+            .parse(reader);
     
-        while ((tokens = reader.readNext()) != null) {
-            if (tokens[0].equals("rank")) {
-                continue; // Skip the header line
-            }
+        for (CSVRecord record : parser) {
+            int deckId = Integer.parseInt(record.get("deck_id"));
+            int cardId = Integer.parseInt(record.get("card_id"));
 
-            deckIDs.get(Integer.parseInt(tokens[6])).addCard(cardIDs.get(Integer.parseInt(tokens[5])));
+            if (deckIDs.containsKey(deckId) && cardIDs.containsKey(cardId)) {
+                deckIDs.get(deckId).addCard(cardIDs.get(cardId));
+            } else {
+                System.err.println("Warning: Deck ID or Card ID not found - Deck: " + deckId + ", Card: " + cardId);
+            }
         }
-        reader.close();
     }
 
-    private void buildCSVTournaments() throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReader(new FileReader(CSVFolder + "/normalized_tournament.csv"));
-        String[] tokens; //rank, commander, partner, normalized_card, author, tournament
+    private void buildCSVTournaments() throws IOException {
+        Reader reader = new FileReader(CSVFolder + "/normalized_tournament.csv");
+        CSVParser parser = CSVFormat.DEFAULT
+            .builder()
+            .setHeader()
+            .setSkipHeaderRecord(true) // Skips the first row
+            .setIgnoreSurroundingSpaces(true) // Removes extra spaces
+            .setIgnoreEmptyLines(true) // Ignores blank lines
+            .setQuote('"') // Ensures quoted values work properly
+            .get()
+            .parse(reader);
     
-        while ((tokens = reader.readNext()) != null) {
-            if (tokens[0].equals("rank")) {
-                continue; // Skip the header line
-            }
-
+        for (CSVRecord record : parser) {
             Tournament newTournament = new Tournament(
-                Integer.parseInt(tokens[5])
+                Integer.parseInt(record.get("id"))
             );
             tournaments.add(newTournament);
-            tournamentIDs.put(newTournament.getId(), newTournament);            
+            tournamentIDs.put(newTournament.getId(), newTournament);
         }
-        reader.close();
-
+    
         buildTournamentEntries();
+        
         for (Tournament tournament : tournaments) {
             for (TournamentEntry entry : tournament.getEntries()) {
                 entry.convertRank(tournament.getEntries().size());
@@ -203,29 +227,30 @@ public class CSVCollector extends DataCollector{
     protected void buildTournamentEntries() {
         try {
             buildCSVTournamentEntries();
-        } catch (IOException | CsvValidationException e) {
+        } catch (IOException e) {
             System.out.println("File " + CSVFolder + "/refined_decks.csv not found!");
             e.printStackTrace();
         }
     }
 
-    private void buildCSVTournamentEntries() throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReader(new FileReader(CSVFolder + "/refined_decks.csv"));
-        String[] tokens; //id, commander, partner, tournament, author, rank
+    private void buildCSVTournamentEntries() throws IOException {
+        Reader reader = new FileReader(CSVFolder + "/refined_decks.csv");
+        CSVParser parser = CSVFormat.DEFAULT
+            .builder()
+            .setHeader()
+            .setSkipHeaderRecord(true) // Skips the first row
+            .setIgnoreSurroundingSpaces(true) // Removes extra spaces
+            .setIgnoreEmptyLines(true) // Ignores blank lines
+            .setQuote('"') // Ensures quoted values work properly
+            .get()
+            .parse(reader);
     
-        
-        while ((tokens = reader.readNext()) != null) {
-            if (tokens[0].equals("id")) {
-                continue; // Skip the header line
-            }
-            Deck deck = deckIDs.get(Integer.parseInt(tokens[0]));
-            Tournament tournament = tournamentIDs.get(Integer.parseInt(tokens[3]));
-            tournament.addEntry(
-                deck,
-                tokens[5]
-                );
+        for (CSVRecord record : parser) {
+            Deck deck = deckIDs.get(Integer.parseInt(record.get("id")));
+            Tournament tournament = tournamentIDs.get(Integer.parseInt(record.get("tournament")));
+
+            tournament.addEntry(deck, record.get("rank"));
             deck.setTournament(tournament);
         }
-        reader.close();
     }
 }

@@ -24,9 +24,9 @@ public class DataLayerController {
 
     }
 
-    public static void DBCollector() throws SQLException {
+    public static void DBCollector(String PDURL, String username, String password) throws SQLException {
         CSVReader.buildComboMap();
-        DataBaseConnector connection = new DataBaseConnector();
+        DataBaseConnector connection = new DataBaseConnector(PDURL, username, password);
 
         try {
             connection.getConnection();

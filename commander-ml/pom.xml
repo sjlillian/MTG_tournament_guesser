@@ -6,7 +6,7 @@
 
   <groupId>com.sjl.mtgai</groupId>
   <artifactId>commander-ml</artifactId>
-  <version>.1</version>
+  <version>1</version>
 
   <name>commander-ml</name>
   <!-- FIXME change it to the project's website -->
@@ -14,8 +14,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -76,11 +76,21 @@
         <version>1.5.17</version>
         <scope>compile</scope>
     </dependency>
-    <!-- Open CSV Dependency-->
+    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
     <dependency>
-        <groupId>com.opencsv</groupId>
-        <artifactId>opencsv</artifactId>
-        <version>5.5.2</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-csv</artifactId>
+        <version>1.14.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.1</version>
     </dependency>
   </dependencies>
 
@@ -109,6 +119,28 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
+          <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>com.sjl.mtgai.App</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+        <!-- Shade Plugin for Fat JAR -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>

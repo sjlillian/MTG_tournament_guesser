@@ -30,6 +30,9 @@ public class UserLayerController {
             // Classification predictions
             int[] clas = LogicLayerController.getClassForest().classPredict(userTournamentController.getClassDataFrame());
 
+            // Rebuild forests
+            // LogicLayerController.retrain();
+
             int i = 0;
             for (Tournament t : userTournamentController.getTournaments()) {
                 for (Deck d : t.getDecks()) {

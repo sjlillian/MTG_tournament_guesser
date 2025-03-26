@@ -10,15 +10,13 @@ import smile.classification.RandomForest;
 
 public class ClassRandomForestOptimizer {
     private RandomForest model;
-    private int maxRetries;
     private DataFrame dataFrame;
     private ArrayList<int[]> parameterCombinations; // Combinations of random forest hyperparameters (ntrees, mtry, maxDepth, maxNodes, nodeSize)
     private ArrayList<double[]> performanceMetrics; // Combination of performance metrics (accuracy, errors)
     private Random random = new Random();
     
-    public ClassRandomForestOptimizer(RandomForest model, DataFrame dataFrame, int maxRetries) {
+    public ClassRandomForestOptimizer(RandomForest model, DataFrame dataFrame) {
         this.model = model;
-        this.maxRetries = maxRetries;
         this.dataFrame = dataFrame;
         this.parameterCombinations = new ArrayList<int[]>();
         this.performanceMetrics = new ArrayList<double[]>();
@@ -28,7 +26,7 @@ public class ClassRandomForestOptimizer {
         }); // default parameters
     }
     
-    public RandomForest run() {
+    public RandomForest run(int maxRetries) {
         return optimizeModel(model, maxRetries, 0);
     }
     

@@ -104,3 +104,7 @@ Pull the latest changes from GitHub:
 If a card is not found, the first thing to check is the `refined_cards.csv` file. It could be as simple as a missing capitolization or appostrophe. If that is the case, update your csv file to match what is in `refined_cards.csv`. If the database file does NOT contain your card, create a new Issue for it in the github repository. Put the name of your card as well as all the information needed to fill out the entry in `refined_cards.csv`, as well as a link to a website to prove that it is a legit card.
 
 **Note: If your card is a flavor card (i.e. Affrican Swallow // Eurpoean Swallow), then it will not show up in `refined_cards.csv`!**
+
+***Q: I've tried to run the jar, but it is giving me an error/exception/"not running"/etc. What is wrong?***
+
+If the jar file is not running, try rebuilding the file. Run `mvn clean package shade:shade` within the commander-ml directory. That should rebuild the maven fat jar with all the dependencies.

@@ -13,6 +13,7 @@ C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\jav
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\dataLayer\dataTypes\Deck.java
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\logicLayer\ClassRandomForestOptimizer.java
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\userLayer\userTournamentController.java
+C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\api\ScryfallAPI.java
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\dataLayer\CSVCollector.java
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\logicLayer\FeatureEngineering\TournamentFeatures.java
 C:\Users\xaldo\OneDrive\Desktop\MTG_tournament_guesser\commander-ml\src\main\java\com\sjl\mtgai\UserLayerController.java

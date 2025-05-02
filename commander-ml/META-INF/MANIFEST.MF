@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven 3.9.9
+Built-By: xaldo
+Build-Jdk: 21.0.6
+Class-Path: postgresql-42.7.5.jar checker-qual-3.48.3.jar smile-base-4.3
+ .0.jar slf4j-api-2.0.17.jar javacpp-1.5.11-linux-x86_64.jar javacpp-1.5
+ .11-windows-x86_64.jar javacpp-1.5.11-macosx-x86_64.jar javacpp-1.5.11-
+ macosx-arm64.jar openblas-0.3.28-1.5.11-linux-x86_64.jar javacpp-1.5.11
+ .jar openblas-0.3.28-1.5.11-windows-x86_64.jar openblas-0.3.28-1.5.11-m
+ acosx-x86_64.jar openblas-0.3.28-1.5.11-macosx-arm64.jar arpack-ng-3.9.
+ 1-1.5.11.jar openblas-0.3.28-1.5.11.jar arpack-ng-3.9.1-1.5.11-linux-x8
+ 6_64.jar arpack-ng-3.9.1-1.5.11-windows-x86_64.jar arpack-ng-3.9.1-1.5.
+ 11-macosx-x86_64.jar parso-2.0.14.jar duckdb_jdbc-1.2.0.jar smile-core-
+ 4.3.0.jar smile-data-2.6.0.jar smile-math-2.6.0.jar smile-plot-4.3.0.ja
+ r jackson-dataformat-xml-2.18.3.jar jackson-core-2.18.3.jar jackson-ann
+ otations-2.18.3.jar jackson-databind-2.18.3.jar stax2-api-4.2.2.jar woo
+ dstox-core-7.0.0.jar swingx-1.6.1.jar filters-2.0.235.jar swing-worker-
+ 1.1.jar slf4j-simple-2.0.17.jar logback-classic-1.5.17.jar logback-core
+ -1.5.17.jar commons-csv-1.14.0.jar commons-io-2.18.0.jar commons-codec-
+ 1.18.0.jar commons-lang-2.1.jar plexus-utils-1.1.jar
+Main-Class: com.sjl.mtgai.App
+

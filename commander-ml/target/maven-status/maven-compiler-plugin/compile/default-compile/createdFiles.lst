@@ -1,7 +1,9 @@
 com\sjl\mtgai\logicLayer\ConvertTournamentData.class
 com\sjl\mtgai\dataLayer\DataBaseConnector.class
+com\sjl\mtgai\api\ScryfallAPI$ScryfallAPIException.class
 com\sjl\mtgai\dataLayer\DataCollector.class
 com\sjl\mtgai\logicLayer\FeatureEngineering\RegDeckFeatures.class
+com\sjl\mtgai\api\ScryfallAPI.class
 com\sjl\mtgai\logicLayer\ClassRandomForestOptimizer.class
 com\sjl\mtgai\logicLayer\FeatureEngineering\ArchetypeFeatureExtractor.class
 com\sjl\mtgai\App.class

@@ -2,6 +2,7 @@ package com.sjl.mtgai;
 
 import java.sql.SQLException;
 
+import com.sjl.mtgai.api.ScryfallAPI;
 import com.sjl.mtgai.dataLayer.CSVCollector;
 import com.sjl.mtgai.dataLayer.CSVReader;
 import com.sjl.mtgai.dataLayer.DBCollector;
@@ -15,7 +16,7 @@ public class DataLayerController {
     public static void CSVCollector() {
         CSVReader.buildComboMap();
 
-        collector = new CSVCollector("database_files");
+        collector = new CSVCollector("database_files", new ScryfallAPI());
 
         
         collector.buildCards();
